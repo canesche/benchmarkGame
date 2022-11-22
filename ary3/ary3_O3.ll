@@ -9,14 +9,14 @@ target triple = "x86_64-pc-linux-gnu"
 ; Function Attrs: nounwind uwtable
 define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readnone %1) local_unnamed_addr #0 {
   %3 = tail call i64 @clock() #5
-  %4 = tail call noalias dereferenceable_or_null(60000000) i8* @calloc(i64 noundef 15000000, i64 noundef 4) #5
+  %4 = tail call noalias dereferenceable_or_null(4000000) i8* @calloc(i64 noundef 1000000, i64 noundef 4) #5
   %5 = bitcast i8* %4 to i32*
-  %6 = tail call noalias dereferenceable_or_null(60000000) i8* @calloc(i64 noundef 15000000, i64 noundef 4) #5
+  %6 = tail call noalias dereferenceable_or_null(4000000) i8* @calloc(i64 noundef 1000000, i64 noundef 4) #5
   br label %7
 
 7:                                                ; preds = %7, %2
-  %8 = phi i64 [ 0, %2 ], [ %38, %7 ]
-  %9 = phi <4 x i64> [ <i64 0, i64 1, i64 2, i64 3>, %2 ], [ %39, %7 ]
+  %8 = phi i64 [ 0, %2 ], [ %28, %7 ]
+  %9 = phi <4 x i64> [ <i64 0, i64 1, i64 2, i64 3>, %2 ], [ %29, %7 ]
   %10 = getelementptr inbounds i32, i32* %5, i64 %8
   %11 = trunc <4 x i64> %9 to <4 x i32>
   %12 = add <4 x i32> %11, <i32 1, i32 1, i32 1, i32 1>
@@ -27,7 +27,7 @@ define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readnone %1) l
   %16 = getelementptr inbounds i32, i32* %10, i64 4
   %17 = bitcast i32* %16 to <4 x i32>*
   store <4 x i32> %14, <4 x i32>* %17, align 4, !tbaa !5
-  %18 = add nuw nsw i64 %8, 8
+  %18 = or i64 %8, 8
   %19 = add <4 x i64> %9, <i64 8, i64 8, i64 8, i64 8>
   %20 = getelementptr inbounds i32, i32* %5, i64 %18
   %21 = trunc <4 x i64> %19 to <4 x i32>
@@ -41,96 +41,84 @@ define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readnone %1) l
   store <4 x i32> %24, <4 x i32>* %27, align 4, !tbaa !5
   %28 = add nuw nsw i64 %8, 16
   %29 = add <4 x i64> %9, <i64 16, i64 16, i64 16, i64 16>
-  %30 = getelementptr inbounds i32, i32* %5, i64 %28
-  %31 = trunc <4 x i64> %29 to <4 x i32>
-  %32 = add <4 x i32> %31, <i32 1, i32 1, i32 1, i32 1>
-  %33 = trunc <4 x i64> %29 to <4 x i32>
-  %34 = add <4 x i32> %33, <i32 5, i32 5, i32 5, i32 5>
-  %35 = bitcast i32* %30 to <4 x i32>*
-  store <4 x i32> %32, <4 x i32>* %35, align 4, !tbaa !5
-  %36 = getelementptr inbounds i32, i32* %30, i64 4
-  %37 = bitcast i32* %36 to <4 x i32>*
-  store <4 x i32> %34, <4 x i32>* %37, align 4, !tbaa !5
-  %38 = add nuw nsw i64 %8, 24
-  %39 = add <4 x i64> %9, <i64 24, i64 24, i64 24, i64 24>
-  %40 = icmp eq i64 %38, 15000000
-  br i1 %40, label %41, label %7, !llvm.loop !9
+  %30 = icmp eq i64 %28, 1000000
+  br i1 %30, label %31, label %7, !llvm.loop !9
 
-41:                                               ; preds = %7
-  %42 = bitcast i8* %6 to i32*
-  br label %43
+31:                                               ; preds = %7
+  %32 = bitcast i8* %6 to i32*
+  br label %33
 
-43:                                               ; preds = %91, %41
-  %44 = phi i32 [ %92, %91 ], [ 0, %41 ]
-  br label %45
+33:                                               ; preds = %81, %31
+  %34 = phi i32 [ %82, %81 ], [ 0, %31 ]
+  br label %35
 
-45:                                               ; preds = %45, %43
-  %46 = phi i64 [ 0, %43 ], [ %89, %45 ]
-  %47 = sub nuw nsw i64 14999999, %46
-  %48 = getelementptr inbounds i32, i32* %5, i64 %47
-  %49 = getelementptr inbounds i32, i32* %48, i64 -3
-  %50 = bitcast i32* %49 to <4 x i32>*
-  %51 = load <4 x i32>, <4 x i32>* %50, align 4, !tbaa !5
-  %52 = getelementptr inbounds i32, i32* %48, i64 -4
-  %53 = getelementptr inbounds i32, i32* %52, i64 -3
-  %54 = bitcast i32* %53 to <4 x i32>*
-  %55 = load <4 x i32>, <4 x i32>* %54, align 4, !tbaa !5
-  %56 = getelementptr inbounds i32, i32* %42, i64 %47
-  %57 = getelementptr inbounds i32, i32* %56, i64 -3
-  %58 = bitcast i32* %57 to <4 x i32>*
-  %59 = load <4 x i32>, <4 x i32>* %58, align 4, !tbaa !5
-  %60 = getelementptr inbounds i32, i32* %56, i64 -4
-  %61 = getelementptr inbounds i32, i32* %60, i64 -3
-  %62 = bitcast i32* %61 to <4 x i32>*
-  %63 = load <4 x i32>, <4 x i32>* %62, align 4, !tbaa !5
-  %64 = add nsw <4 x i32> %59, %51
-  %65 = add nsw <4 x i32> %63, %55
-  %66 = bitcast i32* %57 to <4 x i32>*
-  store <4 x i32> %64, <4 x i32>* %66, align 4, !tbaa !5
-  %67 = bitcast i32* %61 to <4 x i32>*
-  store <4 x i32> %65, <4 x i32>* %67, align 4, !tbaa !5
-  %68 = sub nsw i64 14999991, %46
-  %69 = getelementptr inbounds i32, i32* %5, i64 %68
-  %70 = getelementptr inbounds i32, i32* %69, i64 -3
-  %71 = bitcast i32* %70 to <4 x i32>*
-  %72 = load <4 x i32>, <4 x i32>* %71, align 4, !tbaa !5
-  %73 = getelementptr inbounds i32, i32* %69, i64 -4
-  %74 = getelementptr inbounds i32, i32* %73, i64 -3
-  %75 = bitcast i32* %74 to <4 x i32>*
-  %76 = load <4 x i32>, <4 x i32>* %75, align 4, !tbaa !5
-  %77 = getelementptr inbounds i32, i32* %42, i64 %68
-  %78 = getelementptr inbounds i32, i32* %77, i64 -3
-  %79 = bitcast i32* %78 to <4 x i32>*
-  %80 = load <4 x i32>, <4 x i32>* %79, align 4, !tbaa !5
-  %81 = getelementptr inbounds i32, i32* %77, i64 -4
-  %82 = getelementptr inbounds i32, i32* %81, i64 -3
-  %83 = bitcast i32* %82 to <4 x i32>*
-  %84 = load <4 x i32>, <4 x i32>* %83, align 4, !tbaa !5
-  %85 = add nsw <4 x i32> %80, %72
-  %86 = add nsw <4 x i32> %84, %76
-  %87 = bitcast i32* %78 to <4 x i32>*
-  store <4 x i32> %85, <4 x i32>* %87, align 4, !tbaa !5
-  %88 = bitcast i32* %82 to <4 x i32>*
-  store <4 x i32> %86, <4 x i32>* %88, align 4, !tbaa !5
-  %89 = add nuw nsw i64 %46, 16
-  %90 = icmp eq i64 %89, 15000000
-  br i1 %90, label %91, label %45, !llvm.loop !12
+35:                                               ; preds = %35, %33
+  %36 = phi i64 [ 0, %33 ], [ %79, %35 ]
+  %37 = sub nuw nsw i64 999999, %36
+  %38 = getelementptr inbounds i32, i32* %5, i64 %37
+  %39 = getelementptr inbounds i32, i32* %38, i64 -3
+  %40 = bitcast i32* %39 to <4 x i32>*
+  %41 = load <4 x i32>, <4 x i32>* %40, align 4, !tbaa !5
+  %42 = getelementptr inbounds i32, i32* %38, i64 -4
+  %43 = getelementptr inbounds i32, i32* %42, i64 -3
+  %44 = bitcast i32* %43 to <4 x i32>*
+  %45 = load <4 x i32>, <4 x i32>* %44, align 4, !tbaa !5
+  %46 = getelementptr inbounds i32, i32* %32, i64 %37
+  %47 = getelementptr inbounds i32, i32* %46, i64 -3
+  %48 = bitcast i32* %47 to <4 x i32>*
+  %49 = load <4 x i32>, <4 x i32>* %48, align 4, !tbaa !5
+  %50 = getelementptr inbounds i32, i32* %46, i64 -4
+  %51 = getelementptr inbounds i32, i32* %50, i64 -3
+  %52 = bitcast i32* %51 to <4 x i32>*
+  %53 = load <4 x i32>, <4 x i32>* %52, align 4, !tbaa !5
+  %54 = add nsw <4 x i32> %49, %41
+  %55 = add nsw <4 x i32> %53, %45
+  %56 = bitcast i32* %47 to <4 x i32>*
+  store <4 x i32> %54, <4 x i32>* %56, align 4, !tbaa !5
+  %57 = bitcast i32* %51 to <4 x i32>*
+  store <4 x i32> %55, <4 x i32>* %57, align 4, !tbaa !5
+  %58 = sub nsw i64 999991, %36
+  %59 = getelementptr inbounds i32, i32* %5, i64 %58
+  %60 = getelementptr inbounds i32, i32* %59, i64 -3
+  %61 = bitcast i32* %60 to <4 x i32>*
+  %62 = load <4 x i32>, <4 x i32>* %61, align 4, !tbaa !5
+  %63 = getelementptr inbounds i32, i32* %59, i64 -4
+  %64 = getelementptr inbounds i32, i32* %63, i64 -3
+  %65 = bitcast i32* %64 to <4 x i32>*
+  %66 = load <4 x i32>, <4 x i32>* %65, align 4, !tbaa !5
+  %67 = getelementptr inbounds i32, i32* %32, i64 %58
+  %68 = getelementptr inbounds i32, i32* %67, i64 -3
+  %69 = bitcast i32* %68 to <4 x i32>*
+  %70 = load <4 x i32>, <4 x i32>* %69, align 4, !tbaa !5
+  %71 = getelementptr inbounds i32, i32* %67, i64 -4
+  %72 = getelementptr inbounds i32, i32* %71, i64 -3
+  %73 = bitcast i32* %72 to <4 x i32>*
+  %74 = load <4 x i32>, <4 x i32>* %73, align 4, !tbaa !5
+  %75 = add nsw <4 x i32> %70, %62
+  %76 = add nsw <4 x i32> %74, %66
+  %77 = bitcast i32* %68 to <4 x i32>*
+  store <4 x i32> %75, <4 x i32>* %77, align 4, !tbaa !5
+  %78 = bitcast i32* %72 to <4 x i32>*
+  store <4 x i32> %76, <4 x i32>* %78, align 4, !tbaa !5
+  %79 = add nuw nsw i64 %36, 16
+  %80 = icmp eq i64 %79, 1000000
+  br i1 %80, label %81, label %35, !llvm.loop !12
 
-91:                                               ; preds = %45
-  %92 = add nuw nsw i32 %44, 1
-  %93 = icmp eq i32 %92, 1000
-  br i1 %93, label %94, label %43, !llvm.loop !13
+81:                                               ; preds = %35
+  %82 = add nuw nsw i32 %34, 1
+  %83 = icmp eq i32 %82, 1000
+  br i1 %83, label %84, label %33, !llvm.loop !13
 
-94:                                               ; preds = %91
-  %95 = load i32, i32* %42, align 4, !tbaa !5
-  %96 = getelementptr inbounds i32, i32* %42, i64 14999999
-  %97 = load i32, i32* %96, align 4, !tbaa !5
-  %98 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i64 0, i64 0), i32 noundef %95, i32 noundef %97)
-  %99 = tail call i64 @clock() #5
-  %100 = sub nsw i64 %99, %3
-  %101 = sitofp i64 %100 to double
-  %102 = fdiv double %101, 1.000000e+06
-  %103 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([11 x i8], [11 x i8]* @.str.1, i64 0, i64 0), double noundef %102)
+84:                                               ; preds = %81
+  %85 = load i32, i32* %32, align 4, !tbaa !5
+  %86 = getelementptr inbounds i32, i32* %32, i64 999999
+  %87 = load i32, i32* %86, align 4, !tbaa !5
+  %88 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i64 0, i64 0), i32 noundef %85, i32 noundef %87)
+  %89 = tail call i64 @clock() #5
+  %90 = sub nsw i64 %89, %3
+  %91 = sitofp i64 %90 to double
+  %92 = fdiv double %91, 1.000000e+06
+  %93 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([11 x i8], [11 x i8]* @.str.1, i64 0, i64 0), double noundef %92)
   tail call void @free(i8* noundef nonnull %4) #5
   tail call void @free(i8* noundef nonnull %6) #5
   ret i32 0

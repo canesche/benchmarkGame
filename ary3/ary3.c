@@ -17,7 +17,7 @@
 
 int main(int argc, char *argv[]) {
 
-  int n = 15000000;
+  int n = 1000000;
   int i, k, *x, *y;
 
   clock_t start;

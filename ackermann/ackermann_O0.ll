@@ -62,7 +62,7 @@ define dso_local i32 @main(i32 noundef %0, i8** noundef %1) #0 {
   store i32 0, i32* %3, align 4
   store i32 %0, i32* %4, align 4
   store i8** %1, i8*** %5, align 8
-  store i32 13, i32* %6, align 4
+  store i32 12, i32* %6, align 4
   %9 = call i64 @clock() #3
   store i64 %9, i64* %7, align 8
   %10 = load i32, i32* %6, align 4

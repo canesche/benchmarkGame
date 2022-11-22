@@ -16,7 +16,7 @@ Ack(int M, int N) {
 
 int
 main(int argc, char *argv[]) {
-    int n = 13;
+    int n = 12;
 
 	clock_t start;
  	double time;

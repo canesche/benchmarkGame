@@ -21,7 +21,7 @@ define dso_local i32 @main(i32 noundef %0, i8** noundef %1) #0 {
   store i32 0, i32* %3, align 4
   store i32 %0, i32* %4, align 4
   store i8** %1, i8*** %5, align 8
-  store i32 15000000, i32* %6, align 4
+  store i32 1000000, i32* %6, align 4
   %13 = call i64 @clock() #3
   store i64 %13, i64* %11, align 8
   %14 = load i32, i32* %6, align 4

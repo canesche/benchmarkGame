@@ -37,8 +37,8 @@ define dso_local i32 @Ack(i32 noundef %0, i32 noundef %1) local_unnamed_addr #0 
 ; Function Attrs: nounwind uwtable
 define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readnone %1) local_unnamed_addr #1 {
   %3 = tail call i64 @clock() #4
-  %4 = tail call i32 @Ack(i32 noundef 3, i32 noundef 13)
-  %5 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @.str, i64 0, i64 0), i32 noundef 13, i32 noundef %4)
+  %4 = tail call i32 @Ack(i32 noundef 3, i32 noundef 12)
+  %5 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([15 x i8], [15 x i8]* @.str, i64 0, i64 0), i32 noundef 12, i32 noundef %4)
   %6 = tail call i64 @clock() #4
   %7 = sub nsw i64 %6, %3
   %8 = sitofp i64 %7 to double
