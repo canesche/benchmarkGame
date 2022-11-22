@@ -12,6 +12,7 @@ target triple = "x86_64-pc-linux-gnu"
 @.str.2 = private unnamed_addr constant [3 x i8] c"%x\00", align 1
 @.str.3 = private unnamed_addr constant [3 x i8] c"%d\00", align 1
 @.str.4 = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@.str.5 = private unnamed_addr constant [11 x i8] c"Time: %lf\0A\00", align 1
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local %struct.ht_node* @ht_node_create(i8* noundef %0) #0 {
@@ -213,103 +214,99 @@ define dso_local i32 @main(i32 noundef %0, i8** noundef %1) #0 {
   %7 = alloca i32, align 4
   %8 = alloca i32, align 4
   %9 = alloca [32 x i8], align 16
-  %10 = alloca %struct.ht_ht*, align 8
+  %10 = alloca i64, align 8
+  %11 = alloca double, align 8
+  %12 = alloca %struct.ht_ht*, align 8
   store i32 0, i32* %3, align 4
   store i32 %0, i32* %4, align 4
   store i8** %1, i8*** %5, align 8
   store i32 0, i32* %7, align 4
-  %11 = load i32, i32* %4, align 4
-  %12 = icmp eq i32 %11, 2
-  br i1 %12, label %13, label %18
-
-13:                                               ; preds = %2
-  %14 = load i8**, i8*** %5, align 8
-  %15 = getelementptr inbounds i8*, i8** %14, i64 1
-  %16 = load i8*, i8** %15, align 8
-  %17 = call i32 @atoi(i8* noundef %16) #7
-  br label %19
-
-18:                                               ; preds = %2
-  br label %19
-
-19:                                               ; preds = %18, %13
-  %20 = phi i32 [ %17, %13 ], [ 3500000, %18 ]
-  store i32 %20, i32* %8, align 4
-  %21 = load i32, i32* %8, align 4
-  %22 = call %struct.ht_ht* @ht_create(i32 noundef %21)
-  store %struct.ht_ht* %22, %struct.ht_ht** %10, align 8
+  store i32 3500000, i32* %8, align 4
+  %13 = call i64 @clock() #5
+  store i64 %13, i64* %10, align 8
+  %14 = load i32, i32* %8, align 4
+  %15 = call %struct.ht_ht* @ht_create(i32 noundef %14)
+  store %struct.ht_ht* %15, %struct.ht_ht** %12, align 8
   store i32 1, i32* %6, align 4
-  br label %23
+  br label %16
 
-23:                                               ; preds = %36, %19
+16:                                               ; preds = %29, %2
+  %17 = load i32, i32* %6, align 4
+  %18 = load i32, i32* %8, align 4
+  %19 = icmp sle i32 %17, %18
+  br i1 %19, label %20, label %32
+
+20:                                               ; preds = %16
+  %21 = getelementptr inbounds [32 x i8], [32 x i8]* %9, i64 0, i64 0
+  %22 = load i32, i32* %6, align 4
+  %23 = call i32 (i8*, i8*, ...) @sprintf(i8* noundef %21, i8* noundef getelementptr inbounds ([3 x i8], [3 x i8]* @.str.2, i64 0, i64 0), i32 noundef %22) #5
   %24 = load i32, i32* %6, align 4
-  %25 = load i32, i32* %8, align 4
-  %26 = icmp sle i32 %24, %25
-  br i1 %26, label %27, label %39
+  %25 = load %struct.ht_ht*, %struct.ht_ht** %12, align 8
+  %26 = getelementptr inbounds [32 x i8], [32 x i8]* %9, i64 0, i64 0
+  %27 = call %struct.ht_node* @ht_find_new(%struct.ht_ht* noundef %25, i8* noundef %26)
+  %28 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %27, i32 0, i32 1
+  store i32 %24, i32* %28, align 8
+  br label %29
 
-27:                                               ; preds = %23
-  %28 = getelementptr inbounds [32 x i8], [32 x i8]* %9, i64 0, i64 0
-  %29 = load i32, i32* %6, align 4
-  %30 = call i32 (i8*, i8*, ...) @sprintf(i8* noundef %28, i8* noundef getelementptr inbounds ([3 x i8], [3 x i8]* @.str.2, i64 0, i64 0), i32 noundef %29) #5
-  %31 = load i32, i32* %6, align 4
-  %32 = load %struct.ht_ht*, %struct.ht_ht** %10, align 8
-  %33 = getelementptr inbounds [32 x i8], [32 x i8]* %9, i64 0, i64 0
-  %34 = call %struct.ht_node* @ht_find_new(%struct.ht_ht* noundef %32, i8* noundef %33)
-  %35 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %34, i32 0, i32 1
-  store i32 %31, i32* %35, align 8
-  br label %36
+29:                                               ; preds = %20
+  %30 = load i32, i32* %6, align 4
+  %31 = add nsw i32 %30, 1
+  store i32 %31, i32* %6, align 4
+  br label %16, !llvm.loop !10
 
-36:                                               ; preds = %27
-  %37 = load i32, i32* %6, align 4
-  %38 = add nsw i32 %37, 1
-  store i32 %38, i32* %6, align 4
-  br label %23, !llvm.loop !10
+32:                                               ; preds = %16
+  %33 = load i32, i32* %8, align 4
+  store i32 %33, i32* %6, align 4
+  br label %34
 
-39:                                               ; preds = %23
-  %40 = load i32, i32* %8, align 4
-  store i32 %40, i32* %6, align 4
-  br label %41
+34:                                               ; preds = %49, %32
+  %35 = load i32, i32* %6, align 4
+  %36 = icmp sgt i32 %35, 0
+  br i1 %36, label %37, label %52
 
-41:                                               ; preds = %56, %39
-  %42 = load i32, i32* %6, align 4
-  %43 = icmp sgt i32 %42, 0
-  br i1 %43, label %44, label %59
+37:                                               ; preds = %34
+  %38 = getelementptr inbounds [32 x i8], [32 x i8]* %9, i64 0, i64 0
+  %39 = load i32, i32* %6, align 4
+  %40 = call i32 (i8*, i8*, ...) @sprintf(i8* noundef %38, i8* noundef getelementptr inbounds ([3 x i8], [3 x i8]* @.str.3, i64 0, i64 0), i32 noundef %39) #5
+  %41 = load %struct.ht_ht*, %struct.ht_ht** %12, align 8
+  %42 = getelementptr inbounds [32 x i8], [32 x i8]* %9, i64 0, i64 0
+  %43 = call %struct.ht_node* @ht_find(%struct.ht_ht* noundef %41, i8* noundef %42)
+  %44 = icmp ne %struct.ht_node* %43, null
+  br i1 %44, label %45, label %48
 
-44:                                               ; preds = %41
-  %45 = getelementptr inbounds [32 x i8], [32 x i8]* %9, i64 0, i64 0
-  %46 = load i32, i32* %6, align 4
-  %47 = call i32 (i8*, i8*, ...) @sprintf(i8* noundef %45, i8* noundef getelementptr inbounds ([3 x i8], [3 x i8]* @.str.3, i64 0, i64 0), i32 noundef %46) #5
-  %48 = load %struct.ht_ht*, %struct.ht_ht** %10, align 8
-  %49 = getelementptr inbounds [32 x i8], [32 x i8]* %9, i64 0, i64 0
-  %50 = call %struct.ht_node* @ht_find(%struct.ht_ht* noundef %48, i8* noundef %49)
-  %51 = icmp ne %struct.ht_node* %50, null
-  br i1 %51, label %52, label %55
+45:                                               ; preds = %37
+  %46 = load i32, i32* %7, align 4
+  %47 = add nsw i32 %46, 1
+  store i32 %47, i32* %7, align 4
+  br label %48
 
-52:                                               ; preds = %44
-  %53 = load i32, i32* %7, align 4
-  %54 = add nsw i32 %53, 1
-  store i32 %54, i32* %7, align 4
-  br label %55
+48:                                               ; preds = %45, %37
+  br label %49
 
-55:                                               ; preds = %52, %44
-  br label %56
+49:                                               ; preds = %48
+  %50 = load i32, i32* %6, align 4
+  %51 = add nsw i32 %50, -1
+  store i32 %51, i32* %6, align 4
+  br label %34, !llvm.loop !11
 
-56:                                               ; preds = %55
-  %57 = load i32, i32* %6, align 4
-  %58 = add nsw i32 %57, -1
-  store i32 %58, i32* %6, align 4
-  br label %41, !llvm.loop !11
-
-59:                                               ; preds = %41
-  %60 = load %struct.ht_ht*, %struct.ht_ht** %10, align 8
-  call void @ht_destroy(%struct.ht_ht* noundef %60)
-  %61 = load i32, i32* %7, align 4
-  %62 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([4 x i8], [4 x i8]* @.str.4, i64 0, i64 0), i32 noundef %61)
+52:                                               ; preds = %34
+  %53 = load %struct.ht_ht*, %struct.ht_ht** %12, align 8
+  call void @ht_destroy(%struct.ht_ht* noundef %53)
+  %54 = load i32, i32* %7, align 4
+  %55 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([4 x i8], [4 x i8]* @.str.4, i64 0, i64 0), i32 noundef %54)
+  %56 = call i64 @clock() #5
+  %57 = load i64, i64* %10, align 8
+  %58 = sub nsw i64 %56, %57
+  %59 = sitofp i64 %58 to double
+  %60 = fdiv double %59, 1.000000e+06
+  store double %60, double* %11, align 8
+  %61 = load double, double* %11, align 8
+  %62 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([11 x i8], [11 x i8]* @.str.5, i64 0, i64 0), double noundef %61)
   ret i32 0
 }
 
-; Function Attrs: nounwind readonly willreturn
-declare i32 @atoi(i8* noundef) #4
+; Function Attrs: nounwind
+declare i64 @clock() #1
 
 ; Function Attrs: nounwind
 declare i32 @sprintf(i8* noundef, i8* noundef, ...) #1

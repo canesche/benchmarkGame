@@ -4,6 +4,7 @@ target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16
 target triple = "x86_64-pc-linux-gnu"
 
 @.str = private unnamed_addr constant [7 x i8] c"%0.9f\0A\00", align 1
+@.str.1 = private unnamed_addr constant [11 x i8] c"Time: %lf\0A\00", align 1
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local double @eval_A(i32 noundef %0, i32 noundef %1) #0 {
@@ -214,156 +215,138 @@ define dso_local i32 @main(i32 noundef %0, i8** noundef %1) #0 {
   %6 = alloca i32, align 4
   %7 = alloca i32, align 4
   %8 = alloca i8*, align 8
-  %9 = alloca i64, align 8
-  %10 = alloca i64, align 8
-  %11 = alloca double, align 8
+  %9 = alloca double, align 8
+  %10 = alloca double, align 8
+  %11 = alloca i64, align 8
   %12 = alloca double, align 8
   store i32 0, i32* %3, align 4
   store i32 %0, i32* %4, align 4
   store i8** %1, i8*** %5, align 8
-  %13 = load i32, i32* %4, align 4
-  %14 = icmp eq i32 %13, 2
-  br i1 %14, label %15, label %20
-
-15:                                               ; preds = %2
-  %16 = load i8**, i8*** %5, align 8
-  %17 = getelementptr inbounds i8*, i8** %16, i64 1
-  %18 = load i8*, i8** %17, align 8
-  %19 = call i32 @atoi(i8* noundef %18) #6
-  br label %21
-
-20:                                               ; preds = %2
-  br label %21
-
-21:                                               ; preds = %20, %15
-  %22 = phi i32 [ %19, %15 ], [ 2000, %20 ]
-  store i32 %22, i32* %7, align 4
-  %23 = load i32, i32* %7, align 4
-  %24 = zext i32 %23 to i64
-  %25 = call i8* @llvm.stacksave()
-  store i8* %25, i8** %8, align 8
-  %26 = alloca double, i64 %24, align 16
-  store i64 %24, i64* %9, align 8
-  %27 = load i32, i32* %7, align 4
-  %28 = zext i32 %27 to i64
-  %29 = alloca double, i64 %28, align 16
-  store i64 %28, i64* %10, align 8
+  store i32 5000, i32* %7, align 4
+  %13 = call i8* @llvm.stacksave()
+  store i8* %13, i8** %8, align 8
+  %14 = alloca double, i64 5000, align 16
+  %15 = alloca double, i64 5000, align 16
   store i32 0, i32* %6, align 4
-  br label %30
+  br label %16
 
-30:                                               ; preds = %38, %21
-  %31 = load i32, i32* %6, align 4
-  %32 = load i32, i32* %7, align 4
-  %33 = icmp slt i32 %31, %32
-  br i1 %33, label %34, label %41
+16:                                               ; preds = %23, %2
+  %17 = load i32, i32* %6, align 4
+  %18 = icmp slt i32 %17, 5000
+  br i1 %18, label %19, label %26
 
-34:                                               ; preds = %30
-  %35 = load i32, i32* %6, align 4
-  %36 = sext i32 %35 to i64
-  %37 = getelementptr inbounds double, double* %26, i64 %36
-  store double 1.000000e+00, double* %37, align 8
-  br label %38
+19:                                               ; preds = %16
+  %20 = load i32, i32* %6, align 4
+  %21 = sext i32 %20 to i64
+  %22 = getelementptr inbounds double, double* %14, i64 %21
+  store double 1.000000e+00, double* %22, align 8
+  br label %23
 
-38:                                               ; preds = %34
-  %39 = load i32, i32* %6, align 4
-  %40 = add nsw i32 %39, 1
-  store i32 %40, i32* %6, align 4
-  br label %30, !llvm.loop !11
+23:                                               ; preds = %19
+  %24 = load i32, i32* %6, align 4
+  %25 = add nsw i32 %24, 1
+  store i32 %25, i32* %6, align 4
+  br label %16, !llvm.loop !11
 
-41:                                               ; preds = %30
+26:                                               ; preds = %16
+  %27 = call i64 @clock() #5
+  store i64 %27, i64* %11, align 8
   store i32 0, i32* %6, align 4
-  br label %42
+  br label %28
 
-42:                                               ; preds = %48, %41
-  %43 = load i32, i32* %6, align 4
-  %44 = icmp slt i32 %43, 10
-  br i1 %44, label %45, label %51
+28:                                               ; preds = %32, %26
+  %29 = load i32, i32* %6, align 4
+  %30 = icmp slt i32 %29, 10
+  br i1 %30, label %31, label %35
 
-45:                                               ; preds = %42
-  %46 = load i32, i32* %7, align 4
-  call void @eval_AtA_times_u(i32 noundef %46, double* noundef %26, double* noundef %29)
-  %47 = load i32, i32* %7, align 4
-  call void @eval_AtA_times_u(i32 noundef %47, double* noundef %29, double* noundef %26)
-  br label %48
+31:                                               ; preds = %28
+  call void @eval_AtA_times_u(i32 noundef 5000, double* noundef %14, double* noundef %15)
+  call void @eval_AtA_times_u(i32 noundef 5000, double* noundef %15, double* noundef %14)
+  br label %32
 
-48:                                               ; preds = %45
-  %49 = load i32, i32* %6, align 4
-  %50 = add nsw i32 %49, 1
-  store i32 %50, i32* %6, align 4
-  br label %42, !llvm.loop !12
+32:                                               ; preds = %31
+  %33 = load i32, i32* %6, align 4
+  %34 = add nsw i32 %33, 1
+  store i32 %34, i32* %6, align 4
+  br label %28, !llvm.loop !12
 
-51:                                               ; preds = %42
-  store double 0.000000e+00, double* %12, align 8
-  store double 0.000000e+00, double* %11, align 8
+35:                                               ; preds = %28
+  store double 0.000000e+00, double* %10, align 8
+  store double 0.000000e+00, double* %9, align 8
   store i32 0, i32* %6, align 4
-  br label %52
+  br label %36
 
-52:                                               ; preds = %77, %51
-  %53 = load i32, i32* %6, align 4
-  %54 = load i32, i32* %7, align 4
-  %55 = icmp slt i32 %53, %54
-  br i1 %55, label %56, label %80
+36:                                               ; preds = %60, %35
+  %37 = load i32, i32* %6, align 4
+  %38 = icmp slt i32 %37, 5000
+  br i1 %38, label %39, label %63
 
-56:                                               ; preds = %52
-  %57 = load i32, i32* %6, align 4
-  %58 = sext i32 %57 to i64
-  %59 = getelementptr inbounds double, double* %26, i64 %58
-  %60 = load double, double* %59, align 8
+39:                                               ; preds = %36
+  %40 = load i32, i32* %6, align 4
+  %41 = sext i32 %40 to i64
+  %42 = getelementptr inbounds double, double* %14, i64 %41
+  %43 = load double, double* %42, align 8
+  %44 = load i32, i32* %6, align 4
+  %45 = sext i32 %44 to i64
+  %46 = getelementptr inbounds double, double* %15, i64 %45
+  %47 = load double, double* %46, align 8
+  %48 = load double, double* %9, align 8
+  %49 = call double @llvm.fmuladd.f64(double %43, double %47, double %48)
+  store double %49, double* %9, align 8
+  %50 = load i32, i32* %6, align 4
+  %51 = sext i32 %50 to i64
+  %52 = getelementptr inbounds double, double* %15, i64 %51
+  %53 = load double, double* %52, align 8
+  %54 = load i32, i32* %6, align 4
+  %55 = sext i32 %54 to i64
+  %56 = getelementptr inbounds double, double* %15, i64 %55
+  %57 = load double, double* %56, align 8
+  %58 = load double, double* %10, align 8
+  %59 = call double @llvm.fmuladd.f64(double %53, double %57, double %58)
+  store double %59, double* %10, align 8
+  br label %60
+
+60:                                               ; preds = %39
   %61 = load i32, i32* %6, align 4
-  %62 = sext i32 %61 to i64
-  %63 = getelementptr inbounds double, double* %29, i64 %62
-  %64 = load double, double* %63, align 8
-  %65 = load double, double* %11, align 8
-  %66 = call double @llvm.fmuladd.f64(double %60, double %64, double %65)
-  store double %66, double* %11, align 8
-  %67 = load i32, i32* %6, align 4
-  %68 = sext i32 %67 to i64
-  %69 = getelementptr inbounds double, double* %29, i64 %68
-  %70 = load double, double* %69, align 8
-  %71 = load i32, i32* %6, align 4
-  %72 = sext i32 %71 to i64
-  %73 = getelementptr inbounds double, double* %29, i64 %72
-  %74 = load double, double* %73, align 8
-  %75 = load double, double* %12, align 8
-  %76 = call double @llvm.fmuladd.f64(double %70, double %74, double %75)
-  store double %76, double* %12, align 8
-  br label %77
+  %62 = add nsw i32 %61, 1
+  store i32 %62, i32* %6, align 4
+  br label %36, !llvm.loop !13
 
-77:                                               ; preds = %56
-  %78 = load i32, i32* %6, align 4
-  %79 = add nsw i32 %78, 1
-  store i32 %79, i32* %6, align 4
-  br label %52, !llvm.loop !13
-
-80:                                               ; preds = %52
-  %81 = load double, double* %11, align 8
-  %82 = load double, double* %12, align 8
-  %83 = fdiv double %81, %82
-  %84 = call double @sqrt(double noundef %83) #7
-  %85 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i64 0, i64 0), double noundef %84)
+63:                                               ; preds = %36
+  %64 = load double, double* %9, align 8
+  %65 = load double, double* %10, align 8
+  %66 = fdiv double %64, %65
+  %67 = call double @sqrt(double noundef %66) #5
+  %68 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i64 0, i64 0), double noundef %67)
+  %69 = call i64 @clock() #5
+  %70 = load i64, i64* %11, align 8
+  %71 = sub nsw i64 %69, %70
+  %72 = sitofp i64 %71 to double
+  %73 = fdiv double %72, 1.000000e+06
+  store double %73, double* %12, align 8
+  %74 = load double, double* %12, align 8
+  %75 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([11 x i8], [11 x i8]* @.str.1, i64 0, i64 0), double noundef %74)
   store i32 0, i32* %3, align 4
-  %86 = load i8*, i8** %8, align 8
-  call void @llvm.stackrestore(i8* %86)
-  %87 = load i32, i32* %3, align 4
-  ret i32 %87
+  %76 = load i8*, i8** %8, align 8
+  call void @llvm.stackrestore(i8* %76)
+  %77 = load i32, i32* %3, align 4
+  ret i32 %77
 }
 
-; Function Attrs: nounwind readonly willreturn
-declare i32 @atoi(i8* noundef) #3
+; Function Attrs: nounwind
+declare i64 @clock() #3
 
 declare i32 @printf(i8* noundef, ...) #4
 
 ; Function Attrs: nounwind
-declare double @sqrt(double noundef) #5
+declare double @sqrt(double noundef) #3
 
 attributes #0 = { noinline nounwind optnone uwtable "frame-pointer"="all" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #1 = { nofree nosync nounwind readnone speculatable willreturn }
 attributes #2 = { nofree nosync nounwind willreturn }
-attributes #3 = { nounwind readonly willreturn "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #3 = { nounwind "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #4 = { "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #5 = { nounwind "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #6 = { nounwind readonly willreturn }
-attributes #7 = { nounwind }
+attributes #5 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3, !4}
 !llvm.ident = !{!5}

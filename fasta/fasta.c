@@ -209,7 +209,7 @@ const char header2[] = ">TWO IUB ambiguity codes\n";
 const char header3[] = ">THREE Homo sapiens frequency\n";
 
 int main(int argc, char **argv) {
-  int n=7000000;
+  int n=500000;
   
   clock_t start;
  	double time;

@@ -4,6 +4,7 @@ target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16
 target triple = "x86_64-pc-linux-gnu"
 
 @.str = private unnamed_addr constant [15 x i8] c"Ack(3,%d): %d\0A\00", align 1
+@.str.1 = private unnamed_addr constant [11 x i8] c"Time: %lf\0A\00", align 1
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local i32 @Ack(i32 noundef %0, i32 noundef %1) #0 {
@@ -56,42 +57,38 @@ define dso_local i32 @main(i32 noundef %0, i8** noundef %1) #0 {
   %4 = alloca i32, align 4
   %5 = alloca i8**, align 8
   %6 = alloca i32, align 4
+  %7 = alloca i64, align 8
+  %8 = alloca double, align 8
   store i32 0, i32* %3, align 4
   store i32 %0, i32* %4, align 4
   store i8** %1, i8*** %5, align 8
-  %7 = load i32, i32* %4, align 4
-  %8 = icmp eq i32 %7, 2
-  br i1 %8, label %9, label %14
-
-9:                                                ; preds = %2
-  %10 = load i8**, i8*** %5, align 8
-  %11 = getelementptr inbounds i8*, i8** %10, i64 1
-  %12 = load i8*, i8** %11, align 8
-  %13 = call i32 @atoi(i8* noundef %12) #3
-  br label %15
-
-14:                                               ; preds = %2
-  br label %15
-
-15:                                               ; preds = %14, %9
-  %16 = phi i32 [ %13, %9 ], [ 8, %14 ]
-  store i32 %16, i32* %6, align 4
-  %17 = load i32, i32* %6, align 4
-  %18 = load i32, i32* %6, align 4
-  %19 = call i32 @Ack(i32 noundef 3, i32 noundef %18)
-  %20 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([15 x i8], [15 x i8]* @.str, i64 0, i64 0), i32 noundef %17, i32 noundef %19)
+  store i32 13, i32* %6, align 4
+  %9 = call i64 @clock() #3
+  store i64 %9, i64* %7, align 8
+  %10 = load i32, i32* %6, align 4
+  %11 = load i32, i32* %6, align 4
+  %12 = call i32 @Ack(i32 noundef 3, i32 noundef %11)
+  %13 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([15 x i8], [15 x i8]* @.str, i64 0, i64 0), i32 noundef %10, i32 noundef %12)
+  %14 = call i64 @clock() #3
+  %15 = load i64, i64* %7, align 8
+  %16 = sub nsw i64 %14, %15
+  %17 = sitofp i64 %16 to double
+  %18 = fdiv double %17, 1.000000e+06
+  store double %18, double* %8, align 8
+  %19 = load double, double* %8, align 8
+  %20 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([11 x i8], [11 x i8]* @.str.1, i64 0, i64 0), double noundef %19)
   ret i32 0
 }
 
-; Function Attrs: nounwind readonly willreturn
-declare i32 @atoi(i8* noundef) #1
+; Function Attrs: nounwind
+declare i64 @clock() #1
 
 declare i32 @printf(i8* noundef, ...) #2
 
 attributes #0 = { noinline nounwind optnone uwtable "frame-pointer"="all" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #1 = { nounwind readonly willreturn "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #1 = { nounwind "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #2 = { "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #3 = { nounwind readonly willreturn }
+attributes #3 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3, !4}
 !llvm.ident = !{!5}

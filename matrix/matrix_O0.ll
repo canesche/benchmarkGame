@@ -4,6 +4,7 @@ target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16
 target triple = "x86_64-pc-linux-gnu"
 
 @.str = private unnamed_addr constant [13 x i8] c"%d %d %d %d\0A\00", align 1
+@.str.1 = private unnamed_addr constant [11 x i8] c"Time: %lf\0A\00", align 1
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local i32** @mkmatrix(i32 noundef %0, i32 noundef %1) #0 {
@@ -19,7 +20,7 @@ define dso_local i32** @mkmatrix(i32 noundef %0, i32 noundef %1) #0 {
   %9 = load i32, i32* %3, align 4
   %10 = sext i32 %9 to i64
   %11 = mul i64 %10, 8
-  %12 = call noalias i8* @malloc(i64 noundef %11) #4
+  %12 = call noalias i8* @malloc(i64 noundef %11) #3
   %13 = bitcast i8* %12 to i32**
   store i32** %13, i32*** %8, align 8
   store i32 0, i32* %5, align 4
@@ -35,7 +36,7 @@ define dso_local i32** @mkmatrix(i32 noundef %0, i32 noundef %1) #0 {
   %19 = load i32, i32* %4, align 4
   %20 = sext i32 %19 to i64
   %21 = mul i64 %20, 4
-  %22 = call noalias i8* @malloc(i64 noundef %21) #4
+  %22 = call noalias i8* @malloc(i64 noundef %21) #3
   %23 = bitcast i8* %22 to i32*
   %24 = load i32**, i32*** %8, align 8
   %25 = load i32, i32* %5, align 4
@@ -171,13 +172,13 @@ define dso_local void @freematrix(i32 noundef %0, i32** noundef %1) #0 {
   %13 = getelementptr inbounds i32*, i32** %10, i64 %12
   %14 = load i32*, i32** %13, align 8
   %15 = bitcast i32* %14 to i8*
-  call void @free(i8* noundef %15) #4
+  call void @free(i8* noundef %15) #3
   br label %5, !llvm.loop !11
 
 16:                                               ; preds = %5
   %17 = load i32**, i32*** %4, align 8
   %18 = bitcast i32** %17 to i8*
-  call void @free(i8* noundef %18) #4
+  call void @free(i8* noundef %18) #3
   ret void
 }
 
@@ -304,77 +305,73 @@ define dso_local i32 @main(i32 noundef %0, i8** noundef %1) #0 {
   %8 = alloca i32**, align 8
   %9 = alloca i32**, align 8
   %10 = alloca i32**, align 8
+  %11 = alloca i64, align 8
+  %12 = alloca double, align 8
   store i32 0, i32* %3, align 4
   store i32 %0, i32* %4, align 4
   store i8** %1, i8*** %5, align 8
-  %11 = load i32, i32* %4, align 4
-  %12 = icmp eq i32 %11, 2
-  br i1 %12, label %13, label %18
-
-13:                                               ; preds = %2
-  %14 = load i8**, i8*** %5, align 8
-  %15 = getelementptr inbounds i8*, i8** %14, i64 1
-  %16 = load i8*, i8** %15, align 8
-  %17 = call i32 @atoi(i8* noundef %16) #5
-  br label %19
-
-18:                                               ; preds = %2
-  br label %19
-
-19:                                               ; preds = %18, %13
-  %20 = phi i32 [ %17, %13 ], [ 3000000, %18 ]
-  store i32 %20, i32* %7, align 4
-  %21 = call i32** @mkmatrix(i32 noundef 10, i32 noundef 10)
-  store i32** %21, i32*** %8, align 8
-  %22 = call i32** @mkmatrix(i32 noundef 10, i32 noundef 10)
-  store i32** %22, i32*** %9, align 8
-  %23 = call i32** @mkmatrix(i32 noundef 10, i32 noundef 10)
-  store i32** %23, i32*** %10, align 8
+  store i32 3000000, i32* %7, align 4
+  %13 = call i32** @mkmatrix(i32 noundef 10, i32 noundef 10)
+  store i32** %13, i32*** %8, align 8
+  %14 = call i32** @mkmatrix(i32 noundef 10, i32 noundef 10)
+  store i32** %14, i32*** %9, align 8
+  %15 = call i32** @mkmatrix(i32 noundef 10, i32 noundef 10)
+  store i32** %15, i32*** %10, align 8
+  %16 = call i64 @clock() #3
+  store i64 %16, i64* %11, align 8
   store i32 0, i32* %6, align 4
-  br label %24
+  br label %17
 
-24:                                               ; preds = %33, %19
-  %25 = load i32, i32* %6, align 4
-  %26 = load i32, i32* %7, align 4
-  %27 = icmp slt i32 %25, %26
-  br i1 %27, label %28, label %36
+17:                                               ; preds = %26, %2
+  %18 = load i32, i32* %6, align 4
+  %19 = load i32, i32* %7, align 4
+  %20 = icmp slt i32 %18, %19
+  br i1 %20, label %21, label %29
 
-28:                                               ; preds = %24
-  %29 = load i32**, i32*** %8, align 8
-  %30 = load i32**, i32*** %9, align 8
-  %31 = load i32**, i32*** %10, align 8
-  %32 = call i32** @mmult(i32 noundef 10, i32 noundef 10, i32** noundef %29, i32** noundef %30, i32** noundef %31)
-  store i32** %32, i32*** %10, align 8
-  br label %33
+21:                                               ; preds = %17
+  %22 = load i32**, i32*** %8, align 8
+  %23 = load i32**, i32*** %9, align 8
+  %24 = load i32**, i32*** %10, align 8
+  %25 = call i32** @mmult(i32 noundef 10, i32 noundef 10, i32** noundef %22, i32** noundef %23, i32** noundef %24)
+  store i32** %25, i32*** %10, align 8
+  br label %26
 
-33:                                               ; preds = %28
-  %34 = load i32, i32* %6, align 4
-  %35 = add nsw i32 %34, 1
-  store i32 %35, i32* %6, align 4
-  br label %24, !llvm.loop !15
+26:                                               ; preds = %21
+  %27 = load i32, i32* %6, align 4
+  %28 = add nsw i32 %27, 1
+  store i32 %28, i32* %6, align 4
+  br label %17, !llvm.loop !15
 
-36:                                               ; preds = %24
-  %37 = load i32**, i32*** %10, align 8
-  %38 = getelementptr inbounds i32*, i32** %37, i64 0
-  %39 = load i32*, i32** %38, align 8
-  %40 = getelementptr inbounds i32, i32* %39, i64 0
-  %41 = load i32, i32* %40, align 4
-  %42 = load i32**, i32*** %10, align 8
-  %43 = getelementptr inbounds i32*, i32** %42, i64 2
-  %44 = load i32*, i32** %43, align 8
-  %45 = getelementptr inbounds i32, i32* %44, i64 3
-  %46 = load i32, i32* %45, align 4
-  %47 = load i32**, i32*** %10, align 8
-  %48 = getelementptr inbounds i32*, i32** %47, i64 3
-  %49 = load i32*, i32** %48, align 8
-  %50 = getelementptr inbounds i32, i32* %49, i64 2
-  %51 = load i32, i32* %50, align 4
-  %52 = load i32**, i32*** %10, align 8
-  %53 = getelementptr inbounds i32*, i32** %52, i64 4
-  %54 = load i32*, i32** %53, align 8
-  %55 = getelementptr inbounds i32, i32* %54, i64 4
-  %56 = load i32, i32* %55, align 4
-  %57 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([13 x i8], [13 x i8]* @.str, i64 0, i64 0), i32 noundef %41, i32 noundef %46, i32 noundef %51, i32 noundef %56)
+29:                                               ; preds = %17
+  %30 = load i32**, i32*** %10, align 8
+  %31 = getelementptr inbounds i32*, i32** %30, i64 0
+  %32 = load i32*, i32** %31, align 8
+  %33 = getelementptr inbounds i32, i32* %32, i64 0
+  %34 = load i32, i32* %33, align 4
+  %35 = load i32**, i32*** %10, align 8
+  %36 = getelementptr inbounds i32*, i32** %35, i64 2
+  %37 = load i32*, i32** %36, align 8
+  %38 = getelementptr inbounds i32, i32* %37, i64 3
+  %39 = load i32, i32* %38, align 4
+  %40 = load i32**, i32*** %10, align 8
+  %41 = getelementptr inbounds i32*, i32** %40, i64 3
+  %42 = load i32*, i32** %41, align 8
+  %43 = getelementptr inbounds i32, i32* %42, i64 2
+  %44 = load i32, i32* %43, align 4
+  %45 = load i32**, i32*** %10, align 8
+  %46 = getelementptr inbounds i32*, i32** %45, i64 4
+  %47 = load i32*, i32** %46, align 8
+  %48 = getelementptr inbounds i32, i32* %47, i64 4
+  %49 = load i32, i32* %48, align 4
+  %50 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([13 x i8], [13 x i8]* @.str, i64 0, i64 0), i32 noundef %34, i32 noundef %39, i32 noundef %44, i32 noundef %49)
+  %51 = call i64 @clock() #3
+  %52 = load i64, i64* %11, align 8
+  %53 = sub nsw i64 %51, %52
+  %54 = sitofp i64 %53 to double
+  %55 = fdiv double %54, 1.000000e+06
+  store double %55, double* %12, align 8
+  %56 = load double, double* %12, align 8
+  %57 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([11 x i8], [11 x i8]* @.str.1, i64 0, i64 0), double noundef %56)
   %58 = load i32**, i32*** %8, align 8
   call void @freematrix(i32 noundef 10, i32** noundef %58)
   %59 = load i32**, i32*** %9, align 8
@@ -384,17 +381,15 @@ define dso_local i32 @main(i32 noundef %0, i8** noundef %1) #0 {
   ret i32 0
 }
 
-; Function Attrs: nounwind readonly willreturn
-declare i32 @atoi(i8* noundef) #2
+; Function Attrs: nounwind
+declare i64 @clock() #1
 
-declare i32 @printf(i8* noundef, ...) #3
+declare i32 @printf(i8* noundef, ...) #2
 
 attributes #0 = { noinline nounwind optnone uwtable "frame-pointer"="all" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #1 = { nounwind "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #2 = { nounwind readonly willreturn "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #3 = { "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #4 = { nounwind }
-attributes #5 = { nounwind readonly willreturn }
+attributes #2 = { "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #3 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3, !4}
 !llvm.ident = !{!5}

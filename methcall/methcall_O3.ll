@@ -8,6 +8,7 @@ target triple = "x86_64-pc-linux-gnu"
 
 @.str = private unnamed_addr constant [6 x i8] c"true\0A\00", align 1
 @.str.1 = private unnamed_addr constant [7 x i8] c"false\0A\00", align 1
+@.str.2 = private unnamed_addr constant [11 x i8] c"Time: %lf\0A\00", align 1
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind readonly uwtable willreturn
 define dso_local signext i8 @toggle_value(%struct.Toggle* nocapture noundef readonly %0) #0 {
@@ -110,123 +111,101 @@ define dso_local noalias %struct.NthToggle* @new_NthToggle(i8 noundef signext %0
 }
 
 ; Function Attrs: nounwind uwtable
-define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readonly %1) local_unnamed_addr #5 {
-  %3 = icmp eq i32 %0, 2
-  br i1 %3, label %4, label %9
+define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readnone %1) local_unnamed_addr #5 {
+  %3 = tail call i64 @clock() #9
+  %4 = tail call noalias dereferenceable_or_null(24) i8* @malloc(i64 noundef 24) #9
+  %5 = bitcast i8* %4 to %struct.Toggle*
+  %6 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %5, i64 0, i32 0
+  store i8 1, i8* %6, align 8, !tbaa !5
+  %7 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %5, i64 0, i32 1
+  %8 = bitcast {}** %7 to i8 (%struct.Toggle*)**
+  store i8 (%struct.Toggle*)* @toggle_value, i8 (%struct.Toggle*)** %8, align 8, !tbaa !10
+  %9 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %5, i64 0, i32 2
+  store %struct.Toggle* (%struct.Toggle*)* @toggle_activate, %struct.Toggle* (%struct.Toggle*)** %9, align 8, !tbaa !11
+  %10 = tail call %struct.Toggle* @toggle_activate(%struct.Toggle* noundef nonnull %5) #9
+  %11 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %5, i64 0, i32 1
+  %12 = bitcast {}** %11 to i8 (%struct.Toggle*)**
+  %13 = load i8 (%struct.Toggle*)*, i8 (%struct.Toggle*)** %12, align 8, !tbaa !10
+  %14 = tail call signext i8 %13(%struct.Toggle* noundef nonnull %5) #9
+  br label %15
 
-4:                                                ; preds = %2
-  %5 = getelementptr inbounds i8*, i8** %1, i64 1
-  %6 = load i8*, i8** %5, align 8, !tbaa !18
-  %7 = tail call i64 @strtol(i8* nocapture noundef nonnull %6, i8** noundef null, i32 noundef 10) #9
-  %8 = trunc i64 %7 to i32
-  br label %9
+15:                                               ; preds = %2, %15
+  %16 = phi i32 [ 1, %2 ], [ %23, %15 ]
+  %17 = load %struct.Toggle* (%struct.Toggle*)*, %struct.Toggle* (%struct.Toggle*)** %9, align 8, !tbaa !11
+  %18 = tail call %struct.Toggle* %17(%struct.Toggle* noundef nonnull %5) #9
+  %19 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %18, i64 0, i32 1
+  %20 = bitcast {}** %19 to i8 (%struct.Toggle*)**
+  %21 = load i8 (%struct.Toggle*)*, i8 (%struct.Toggle*)** %20, align 8, !tbaa !10
+  %22 = tail call signext i8 %21(%struct.Toggle* noundef nonnull %5) #9
+  %23 = add nuw nsw i32 %16, 1
+  %24 = icmp eq i32 %23, 500000000
+  br i1 %24, label %25, label %15, !llvm.loop !18
 
-9:                                                ; preds = %2, %4
-  %10 = phi i32 [ %8, %4 ], [ 500000000, %2 ]
-  %11 = tail call noalias dereferenceable_or_null(24) i8* @malloc(i64 noundef 24) #9
-  %12 = bitcast i8* %11 to %struct.Toggle*
-  %13 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %12, i64 0, i32 0
-  store i8 1, i8* %13, align 8, !tbaa !5
-  %14 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %12, i64 0, i32 1
-  %15 = bitcast {}** %14 to i8 (%struct.Toggle*)**
-  store i8 (%struct.Toggle*)* @toggle_value, i8 (%struct.Toggle*)** %15, align 8, !tbaa !10
-  %16 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %12, i64 0, i32 2
-  store %struct.Toggle* (%struct.Toggle*)* @toggle_activate, %struct.Toggle* (%struct.Toggle*)** %16, align 8, !tbaa !11
-  %17 = icmp sgt i32 %10, 0
-  br i1 %17, label %18, label %39
+25:                                               ; preds = %15
+  %26 = icmp eq i8 %22, 0
+  %27 = select i1 %26, i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.1, i64 0, i64 0), i8* getelementptr inbounds ([6 x i8], [6 x i8]* @.str, i64 0, i64 0)
+  %28 = tail call i32 @puts(i8* noundef nonnull dereferenceable(1) %27)
+  tail call void @free(i8* noundef nonnull %6) #9
+  %29 = tail call noalias dereferenceable_or_null(32) i8* @malloc(i64 noundef 32) #9
+  %30 = bitcast i8* %29 to %struct.Toggle*
+  %31 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %30, i64 0, i32 0
+  store i8 1, i8* %31, align 8, !tbaa !5
+  %32 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %30, i64 0, i32 1
+  %33 = bitcast {}** %32 to i8 (%struct.Toggle*)**
+  store i8 (%struct.Toggle*)* @toggle_value, i8 (%struct.Toggle*)** %33, align 8, !tbaa !10
+  %34 = bitcast i8* %29 to %struct.NthToggle*
+  %35 = getelementptr inbounds %struct.NthToggle, %struct.NthToggle* %34, i64 0, i32 3
+  store i32 3, i32* %35, align 8, !tbaa !15
+  %36 = getelementptr inbounds %struct.NthToggle, %struct.NthToggle* %34, i64 0, i32 4
+  store i32 0, i32* %36, align 4, !tbaa !12
+  %37 = getelementptr inbounds %struct.NthToggle, %struct.NthToggle* %34, i64 0, i32 2
+  store %struct.Toggle* (%struct.Toggle*)* bitcast (%struct.NthToggle* (%struct.NthToggle*)* @nth_toggle_activate to %struct.Toggle* (%struct.Toggle*)*), %struct.Toggle* (%struct.Toggle*)** %37, align 8, !tbaa !17
+  %38 = bitcast i8* %29 to %struct.NthToggle*
+  %39 = tail call %struct.NthToggle* @nth_toggle_activate(%struct.NthToggle* noundef nonnull %38) #9
+  %40 = bitcast i8* %29 to %struct.Toggle*
+  %41 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %40, i64 0, i32 1
+  %42 = bitcast {}** %41 to i8 (%struct.Toggle*)**
+  %43 = load i8 (%struct.Toggle*)*, i8 (%struct.Toggle*)** %42, align 8, !tbaa !10
+  %44 = tail call signext i8 %43(%struct.Toggle* noundef nonnull %30) #9
+  br label %45
 
-18:                                               ; preds = %9
-  %19 = tail call %struct.Toggle* @toggle_activate(%struct.Toggle* noundef nonnull %12) #9
-  %20 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %12, i64 0, i32 1
-  %21 = bitcast {}** %20 to i8 (%struct.Toggle*)**
-  %22 = load i8 (%struct.Toggle*)*, i8 (%struct.Toggle*)** %21, align 8, !tbaa !10
-  %23 = tail call signext i8 %22(%struct.Toggle* noundef nonnull %12) #9
-  %24 = icmp eq i32 %10, 1
-  br i1 %24, label %35, label %25, !llvm.loop !19
+45:                                               ; preds = %25, %45
+  %46 = phi i32 [ 1, %25 ], [ %53, %45 ]
+  %47 = load %struct.Toggle* (%struct.Toggle*)*, %struct.Toggle* (%struct.Toggle*)** %37, align 8, !tbaa !17
+  %48 = tail call %struct.Toggle* %47(%struct.Toggle* noundef nonnull %30) #9
+  %49 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %48, i64 0, i32 1
+  %50 = bitcast {}** %49 to i8 (%struct.Toggle*)**
+  %51 = load i8 (%struct.Toggle*)*, i8 (%struct.Toggle*)** %50, align 8, !tbaa !10
+  %52 = tail call signext i8 %51(%struct.Toggle* noundef nonnull %30) #9
+  %53 = add nuw nsw i32 %46, 1
+  %54 = icmp eq i32 %53, 500000000
+  br i1 %54, label %55, label %45, !llvm.loop !20
 
-25:                                               ; preds = %18, %25
-  %26 = phi i32 [ %33, %25 ], [ 1, %18 ]
-  %27 = load %struct.Toggle* (%struct.Toggle*)*, %struct.Toggle* (%struct.Toggle*)** %16, align 8, !tbaa !11
-  %28 = tail call %struct.Toggle* %27(%struct.Toggle* noundef nonnull %12) #9
-  %29 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %28, i64 0, i32 1
-  %30 = bitcast {}** %29 to i8 (%struct.Toggle*)**
-  %31 = load i8 (%struct.Toggle*)*, i8 (%struct.Toggle*)** %30, align 8, !tbaa !10
-  %32 = tail call signext i8 %31(%struct.Toggle* noundef nonnull %12) #9
-  %33 = add nuw nsw i32 %26, 1
-  %34 = icmp eq i32 %33, %10
-  br i1 %34, label %35, label %25, !llvm.loop !19
-
-35:                                               ; preds = %25, %18
-  %36 = phi i8 [ %23, %18 ], [ %32, %25 ]
-  %37 = icmp eq i8 %36, 0
-  %38 = select i1 %37, i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.1, i64 0, i64 0), i8* getelementptr inbounds ([6 x i8], [6 x i8]* @.str, i64 0, i64 0)
-  br label %39
-
-39:                                               ; preds = %35, %9
-  %40 = phi i8* [ %38, %35 ], [ getelementptr inbounds ([6 x i8], [6 x i8]* @.str, i64 0, i64 0), %9 ]
-  %41 = tail call i32 @puts(i8* noundef nonnull dereferenceable(1) %40)
-  tail call void @free(i8* noundef nonnull %13) #9
-  %42 = tail call noalias dereferenceable_or_null(32) i8* @malloc(i64 noundef 32) #9
-  %43 = bitcast i8* %42 to %struct.Toggle*
-  %44 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %43, i64 0, i32 0
-  store i8 1, i8* %44, align 8, !tbaa !5
-  %45 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %43, i64 0, i32 1
-  %46 = bitcast {}** %45 to i8 (%struct.Toggle*)**
-  store i8 (%struct.Toggle*)* @toggle_value, i8 (%struct.Toggle*)** %46, align 8, !tbaa !10
-  %47 = bitcast i8* %42 to %struct.NthToggle*
-  %48 = getelementptr inbounds %struct.NthToggle, %struct.NthToggle* %47, i64 0, i32 3
-  store i32 3, i32* %48, align 8, !tbaa !15
-  %49 = getelementptr inbounds %struct.NthToggle, %struct.NthToggle* %47, i64 0, i32 4
-  store i32 0, i32* %49, align 4, !tbaa !12
-  %50 = getelementptr inbounds %struct.NthToggle, %struct.NthToggle* %47, i64 0, i32 2
-  store %struct.Toggle* (%struct.Toggle*)* bitcast (%struct.NthToggle* (%struct.NthToggle*)* @nth_toggle_activate to %struct.Toggle* (%struct.Toggle*)*), %struct.Toggle* (%struct.Toggle*)** %50, align 8, !tbaa !17
-  br i1 %17, label %51, label %74
-
-51:                                               ; preds = %39
-  %52 = bitcast i8* %42 to %struct.NthToggle*
-  %53 = tail call %struct.NthToggle* @nth_toggle_activate(%struct.NthToggle* noundef nonnull %52) #9
-  %54 = bitcast i8* %42 to %struct.Toggle*
-  %55 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %54, i64 0, i32 1
-  %56 = bitcast {}** %55 to i8 (%struct.Toggle*)**
-  %57 = load i8 (%struct.Toggle*)*, i8 (%struct.Toggle*)** %56, align 8, !tbaa !10
-  %58 = tail call signext i8 %57(%struct.Toggle* noundef nonnull %43) #9
-  %59 = icmp eq i32 %10, 1
-  br i1 %59, label %70, label %60, !llvm.loop !21
-
-60:                                               ; preds = %51, %60
-  %61 = phi i32 [ %68, %60 ], [ 1, %51 ]
-  %62 = load %struct.Toggle* (%struct.Toggle*)*, %struct.Toggle* (%struct.Toggle*)** %50, align 8, !tbaa !17
-  %63 = tail call %struct.Toggle* %62(%struct.Toggle* noundef nonnull %43) #9
-  %64 = getelementptr inbounds %struct.Toggle, %struct.Toggle* %63, i64 0, i32 1
-  %65 = bitcast {}** %64 to i8 (%struct.Toggle*)**
-  %66 = load i8 (%struct.Toggle*)*, i8 (%struct.Toggle*)** %65, align 8, !tbaa !10
-  %67 = tail call signext i8 %66(%struct.Toggle* noundef nonnull %43) #9
-  %68 = add nuw nsw i32 %61, 1
-  %69 = icmp eq i32 %68, %10
-  br i1 %69, label %70, label %60, !llvm.loop !21
-
-70:                                               ; preds = %60, %51
-  %71 = phi i8 [ %58, %51 ], [ %67, %60 ]
-  %72 = icmp eq i8 %71, 0
-  %73 = select i1 %72, i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.1, i64 0, i64 0), i8* getelementptr inbounds ([6 x i8], [6 x i8]* @.str, i64 0, i64 0)
-  br label %74
-
-74:                                               ; preds = %70, %39
-  %75 = phi i8* [ %73, %70 ], [ getelementptr inbounds ([6 x i8], [6 x i8]* @.str, i64 0, i64 0), %39 ]
-  %76 = tail call i32 @puts(i8* noundef nonnull dereferenceable(1) %75)
-  %77 = getelementptr %struct.NthToggle, %struct.NthToggle* %47, i64 0, i32 0
-  tail call void @free(i8* noundef %77) #9
+55:                                               ; preds = %45
+  %56 = icmp eq i8 %52, 0
+  %57 = select i1 %56, i8* getelementptr inbounds ([7 x i8], [7 x i8]* @.str.1, i64 0, i64 0), i8* getelementptr inbounds ([6 x i8], [6 x i8]* @.str, i64 0, i64 0)
+  %58 = tail call i32 @puts(i8* noundef nonnull dereferenceable(1) %57)
+  %59 = tail call i64 @clock() #9
+  %60 = sub nsw i64 %59, %3
+  %61 = sitofp i64 %60 to double
+  %62 = fdiv double %61, 1.000000e+06
+  %63 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([11 x i8], [11 x i8]* @.str.2, i64 0, i64 0), double noundef %62)
+  %64 = getelementptr %struct.NthToggle, %struct.NthToggle* %34, i64 0, i32 0
+  tail call void @free(i8* noundef %64) #9
   ret i32 0
 }
 
+; Function Attrs: nounwind
+declare i64 @clock() local_unnamed_addr #6
+
 ; Function Attrs: nofree nounwind
-declare noundef i32 @puts(i8* nocapture noundef readonly) local_unnamed_addr #6
+declare noundef i32 @puts(i8* nocapture noundef readonly) local_unnamed_addr #7
 
 ; Function Attrs: inaccessiblemem_or_argmemonly mustprogress nounwind willreturn
-declare void @free(i8* nocapture noundef) local_unnamed_addr #7
+declare void @free(i8* nocapture noundef) local_unnamed_addr #8
 
-; Function Attrs: mustprogress nofree nounwind willreturn
-declare i64 @strtol(i8* noundef readonly, i8** nocapture noundef, i32 noundef) local_unnamed_addr #8
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(i8* nocapture noundef readonly, ...) local_unnamed_addr #7
 
 attributes #0 = { mustprogress nofree norecurse nosync nounwind readonly uwtable willreturn "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #1 = { mustprogress nofree norecurse nosync nounwind uwtable willreturn "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
@@ -234,9 +213,9 @@ attributes #2 = { mustprogress nofree norecurse nosync nounwind uwtable willretu
 attributes #3 = { mustprogress nofree nounwind uwtable willreturn "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #4 = { inaccessiblememonly mustprogress nofree nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #5 = { nounwind uwtable "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #6 = { nofree nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #7 = { inaccessiblemem_or_argmemonly mustprogress nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #8 = { mustprogress nofree nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #6 = { nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #7 = { nofree nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #8 = { inaccessiblemem_or_argmemonly mustprogress nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #9 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
@@ -260,7 +239,6 @@ attributes #9 = { nounwind }
 !15 = !{!13, !14, i64 24}
 !16 = !{!13, !7, i64 0}
 !17 = !{!13, !9, i64 16}
-!18 = !{!9, !9, i64 0}
-!19 = distinct !{!19, !20}
-!20 = !{!"llvm.loop.mustprogress"}
-!21 = distinct !{!21, !20}
+!18 = distinct !{!18, !19}
+!19 = !{!"llvm.loop.mustprogress"}
+!20 = distinct !{!20, !19}

@@ -5,6 +5,7 @@ target triple = "x86_64-pc-linux-gnu"
 
 @gen_random.last = internal unnamed_addr global i64 42, align 8
 @.str = private unnamed_addr constant [4 x i8] c"%f\0A\00", align 1
+@.str.1 = private unnamed_addr constant [11 x i8] c"Time: %lf\0A\00", align 1
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable willreturn
 define dso_local double @gen_random(double noundef %0) local_unnamed_addr #0 {
@@ -106,159 +107,138 @@ define dso_local void @benchmark_heapsort(i32 noundef %0, double* nocapture noun
 }
 
 ; Function Attrs: nounwind uwtable
-define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readonly %1) local_unnamed_addr #2 {
-  %3 = icmp eq i32 %0, 2
-  br i1 %3, label %4, label %9
+define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readnone %1) local_unnamed_addr #2 {
+  %3 = tail call i64 @clock() #7
+  %4 = tail call noalias dereferenceable_or_null(64000008) i8* @malloc(i64 noundef 64000008) #7
+  %5 = bitcast i8* %4 to double*
+  %6 = load i64, i64* @gen_random.last, align 8, !tbaa !5
+  br label %7
 
-4:                                                ; preds = %2
-  %5 = getelementptr inbounds i8*, i8** %1, i64 1
-  %6 = load i8*, i8** %5, align 8, !tbaa !13
-  %7 = tail call i64 @strtol(i8* nocapture noundef nonnull %6, i8** noundef null, i32 noundef 10) #7
-  %8 = trunc i64 %7 to i32
-  br label %9
+7:                                                ; preds = %2, %7
+  %8 = phi i64 [ 1, %2 ], [ %16, %7 ]
+  %9 = phi i64 [ %6, %2 ], [ %12, %7 ]
+  %10 = mul nsw i64 %9, 3877
+  %11 = add nsw i64 %10, 29573
+  %12 = srem i64 %11, 139968
+  %13 = sitofp i64 %12 to double
+  %14 = fdiv double %13, 1.399680e+05
+  %15 = getelementptr inbounds double, double* %5, i64 %8
+  store double %14, double* %15, align 8, !tbaa !9
+  %16 = add nuw nsw i64 %8, 1
+  %17 = icmp eq i64 %16, 8000001
+  br i1 %17, label %18, label %7, !llvm.loop !13
 
-9:                                                ; preds = %2, %4
-  %10 = phi i32 [ %8, %4 ], [ 8000000, %2 ]
-  %11 = add i32 %10, 1
-  %12 = sext i32 %11 to i64
-  %13 = shl nsw i64 %12, 3
-  %14 = tail call noalias i8* @malloc(i64 noundef %13) #7
-  %15 = bitcast i8* %14 to double*
-  %16 = icmp slt i32 %10, 1
-  br i1 %16, label %32, label %17
-
-17:                                               ; preds = %9
-  %18 = load i64, i64* @gen_random.last, align 8, !tbaa !5
-  %19 = zext i32 %11 to i64
+18:                                               ; preds = %7
+  store i64 %12, i64* @gen_random.last, align 8, !tbaa !5
+  %19 = getelementptr inbounds double, double* %5, i64 1
   br label %20
 
-20:                                               ; preds = %17, %20
-  %21 = phi i64 [ 1, %17 ], [ %29, %20 ]
-  %22 = phi i64 [ %18, %17 ], [ %25, %20 ]
-  %23 = mul nsw i64 %22, 3877
-  %24 = add nsw i64 %23, 29573
-  %25 = srem i64 %24, 139968
-  %26 = sitofp i64 %25 to double
-  %27 = fdiv double %26, 1.399680e+05
-  %28 = getelementptr inbounds double, double* %15, i64 %21
-  store double %27, double* %28, align 8, !tbaa !9
-  %29 = add nuw nsw i64 %21, 1
-  %30 = icmp eq i64 %29, %19
-  br i1 %30, label %31, label %20, !llvm.loop !15
+20:                                               ; preds = %67, %18
+  %21 = phi i32 [ 8000000, %18 ], [ %37, %67 ]
+  %22 = phi i32 [ 4000001, %18 ], [ %38, %67 ]
+  %23 = icmp sgt i32 %22, 1
+  br i1 %23, label %24, label %29
 
-31:                                               ; preds = %20
-  store i64 %25, i64* @gen_random.last, align 8, !tbaa !5
-  br label %32
-
-32:                                               ; preds = %31, %9
-  %33 = ashr i32 %10, 1
-  %34 = add nsw i32 %33, 1
-  %35 = getelementptr inbounds double, double* %15, i64 1
+24:                                               ; preds = %20
+  %25 = add nsw i32 %22, -1
+  %26 = zext i32 %25 to i64
+  %27 = getelementptr inbounds double, double* %5, i64 %26
+  %28 = load double, double* %27, align 8, !tbaa !9
   br label %36
 
-36:                                               ; preds = %83, %32
-  %37 = phi i32 [ %10, %32 ], [ %53, %83 ]
-  %38 = phi i32 [ %34, %32 ], [ %54, %83 ]
-  %39 = icmp sgt i32 %38, 1
-  br i1 %39, label %40, label %45
+29:                                               ; preds = %20
+  %30 = sext i32 %21 to i64
+  %31 = getelementptr inbounds double, double* %5, i64 %30
+  %32 = load double, double* %31, align 8, !tbaa !9
+  %33 = load double, double* %19, align 8, !tbaa !9
+  store double %33, double* %31, align 8, !tbaa !9
+  %34 = add nsw i32 %21, -1
+  %35 = icmp eq i32 %34, 1
+  br i1 %35, label %71, label %36
 
-40:                                               ; preds = %36
-  %41 = add nsw i32 %38, -1
-  %42 = zext i32 %41 to i64
-  %43 = getelementptr inbounds double, double* %15, i64 %42
-  %44 = load double, double* %43, align 8, !tbaa !9
-  br label %52
+36:                                               ; preds = %29, %24
+  %37 = phi i32 [ %21, %24 ], [ %34, %29 ]
+  %38 = phi i32 [ %25, %24 ], [ %22, %29 ]
+  %39 = phi double [ %28, %24 ], [ %32, %29 ]
+  %40 = shl i32 %38, 1
+  %41 = icmp sgt i32 %40, %37
+  br i1 %41, label %67, label %42
 
-45:                                               ; preds = %36
-  %46 = sext i32 %37 to i64
-  %47 = getelementptr inbounds double, double* %15, i64 %46
-  %48 = load double, double* %47, align 8, !tbaa !9
-  %49 = load double, double* %35, align 8, !tbaa !9
-  store double %49, double* %47, align 8, !tbaa !9
-  %50 = add nsw i32 %37, -1
-  %51 = icmp eq i32 %50, 1
-  br i1 %51, label %87, label %52
+42:                                               ; preds = %36, %62
+  %43 = phi i32 [ %65, %62 ], [ %40, %36 ]
+  %44 = phi i32 [ %58, %62 ], [ %38, %36 ]
+  %45 = icmp slt i32 %43, %37
+  %46 = sext i32 %43 to i64
+  br i1 %45, label %47, label %56
 
-52:                                               ; preds = %45, %40
-  %53 = phi i32 [ %37, %40 ], [ %50, %45 ]
-  %54 = phi i32 [ %41, %40 ], [ %38, %45 ]
-  %55 = phi double [ %44, %40 ], [ %48, %45 ]
-  %56 = shl i32 %54, 1
-  %57 = icmp sgt i32 %56, %53
-  br i1 %57, label %83, label %58
+47:                                               ; preds = %42
+  %48 = getelementptr inbounds double, double* %5, i64 %46
+  %49 = load double, double* %48, align 8, !tbaa !9
+  %50 = or i32 %43, 1
+  %51 = sext i32 %50 to i64
+  %52 = getelementptr inbounds double, double* %5, i64 %51
+  %53 = load double, double* %52, align 8, !tbaa !9
+  %54 = fcmp olt double %49, %53
+  br i1 %54, label %55, label %56
 
-58:                                               ; preds = %52, %78
-  %59 = phi i32 [ %81, %78 ], [ %56, %52 ]
-  %60 = phi i32 [ %74, %78 ], [ %54, %52 ]
-  %61 = icmp slt i32 %59, %53
-  %62 = sext i32 %59 to i64
-  br i1 %61, label %63, label %72
+55:                                               ; preds = %47
+  br label %56
 
-63:                                               ; preds = %58
-  %64 = getelementptr inbounds double, double* %15, i64 %62
-  %65 = load double, double* %64, align 8, !tbaa !9
-  %66 = or i32 %59, 1
-  %67 = sext i32 %66 to i64
-  %68 = getelementptr inbounds double, double* %15, i64 %67
-  %69 = load double, double* %68, align 8, !tbaa !9
-  %70 = fcmp olt double %65, %69
-  br i1 %70, label %71, label %72
+56:                                               ; preds = %55, %47, %42
+  %57 = phi i64 [ %51, %55 ], [ %46, %47 ], [ %46, %42 ]
+  %58 = phi i32 [ %50, %55 ], [ %43, %47 ], [ %43, %42 ]
+  %59 = getelementptr inbounds double, double* %5, i64 %57
+  %60 = load double, double* %59, align 8, !tbaa !9
+  %61 = fcmp olt double %39, %60
+  br i1 %61, label %62, label %67
 
-71:                                               ; preds = %63
-  br label %72
+62:                                               ; preds = %56
+  %63 = sext i32 %44 to i64
+  %64 = getelementptr inbounds double, double* %5, i64 %63
+  store double %60, double* %64, align 8, !tbaa !9
+  %65 = shl nsw i32 %58, 1
+  %66 = icmp sgt i32 %65, %37
+  br i1 %66, label %67, label %42, !llvm.loop !11
 
-72:                                               ; preds = %71, %63, %58
-  %73 = phi i64 [ %67, %71 ], [ %62, %63 ], [ %62, %58 ]
-  %74 = phi i32 [ %66, %71 ], [ %59, %63 ], [ %59, %58 ]
-  %75 = getelementptr inbounds double, double* %15, i64 %73
-  %76 = load double, double* %75, align 8, !tbaa !9
-  %77 = fcmp olt double %55, %76
-  br i1 %77, label %78, label %83
+67:                                               ; preds = %62, %56, %36
+  %68 = phi i32 [ %38, %36 ], [ %58, %62 ], [ %44, %56 ]
+  %69 = sext i32 %68 to i64
+  %70 = getelementptr inbounds double, double* %5, i64 %69
+  store double %39, double* %70, align 8, !tbaa !9
+  br label %20
 
-78:                                               ; preds = %72
-  %79 = sext i32 %60 to i64
-  %80 = getelementptr inbounds double, double* %15, i64 %79
-  store double %76, double* %80, align 8, !tbaa !9
-  %81 = shl nsw i32 %74, 1
-  %82 = icmp sgt i32 %81, %53
-  br i1 %82, label %83, label %58, !llvm.loop !11
-
-83:                                               ; preds = %78, %72, %52
-  %84 = phi i32 [ %54, %52 ], [ %74, %78 ], [ %60, %72 ]
-  %85 = sext i32 %84 to i64
-  %86 = getelementptr inbounds double, double* %15, i64 %85
-  store double %55, double* %86, align 8, !tbaa !9
-  br label %36
-
-87:                                               ; preds = %45
-  store double %48, double* %35, align 8, !tbaa !9
-  %88 = sext i32 %10 to i64
-  %89 = getelementptr inbounds double, double* %15, i64 %88
-  %90 = load double, double* %89, align 8, !tbaa !9
-  %91 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), double noundef %90)
-  tail call void @free(i8* noundef nonnull %14) #7
+71:                                               ; preds = %29
+  %72 = getelementptr inbounds double, double* %5, i64 8000000
+  %73 = load double, double* %72, align 8, !tbaa !9
+  %74 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), double noundef %73)
+  %75 = tail call i64 @clock() #7
+  %76 = sub nsw i64 %75, %3
+  %77 = sitofp i64 %76 to double
+  %78 = fdiv double %77, 1.000000e+06
+  %79 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([11 x i8], [11 x i8]* @.str.1, i64 0, i64 0), double noundef %78)
+  tail call void @free(i8* noundef nonnull %4) #7
   ret i32 0
 }
 
+; Function Attrs: nounwind
+declare i64 @clock() local_unnamed_addr #3
+
 ; Function Attrs: inaccessiblememonly mustprogress nofree nounwind willreturn
-declare noalias noundef i8* @malloc(i64 noundef) local_unnamed_addr #3
+declare noalias noundef i8* @malloc(i64 noundef) local_unnamed_addr #4
 
 ; Function Attrs: nofree nounwind
-declare noundef i32 @printf(i8* nocapture noundef readonly, ...) local_unnamed_addr #4
+declare noundef i32 @printf(i8* nocapture noundef readonly, ...) local_unnamed_addr #5
 
 ; Function Attrs: inaccessiblemem_or_argmemonly mustprogress nounwind willreturn
-declare void @free(i8* nocapture noundef) local_unnamed_addr #5
-
-; Function Attrs: mustprogress nofree nounwind willreturn
-declare i64 @strtol(i8* noundef readonly, i8** nocapture noundef, i32 noundef) local_unnamed_addr #6
+declare void @free(i8* nocapture noundef) local_unnamed_addr #6
 
 attributes #0 = { mustprogress nofree norecurse nosync nounwind uwtable willreturn "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #1 = { nofree norecurse nosync nounwind uwtable "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #2 = { nounwind uwtable "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #3 = { inaccessiblememonly mustprogress nofree nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #4 = { nofree nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #5 = { inaccessiblemem_or_argmemonly mustprogress nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #6 = { mustprogress nofree nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #3 = { nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #4 = { inaccessiblememonly mustprogress nofree nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #5 = { nofree nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #6 = { inaccessiblemem_or_argmemonly mustprogress nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #7 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
@@ -277,6 +257,4 @@ attributes #7 = { nounwind }
 !10 = !{!"double", !7, i64 0}
 !11 = distinct !{!11, !12}
 !12 = !{!"llvm.loop.mustprogress"}
-!13 = !{!14, !14, i64 0}
-!14 = !{!"any pointer", !7, i64 0}
-!15 = distinct !{!15, !12}
+!13 = distinct !{!13, !12}

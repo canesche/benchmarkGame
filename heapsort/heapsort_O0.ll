@@ -5,6 +5,7 @@ target triple = "x86_64-pc-linux-gnu"
 
 @gen_random.last = internal global i64 42, align 8
 @.str = private unnamed_addr constant [4 x i8] c"%f\0A\00", align 1
+@.str.1 = private unnamed_addr constant [11 x i8] c"Time: %lf\0A\00", align 1
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local double @gen_random(double noundef %0) #0 {
@@ -184,90 +185,84 @@ define dso_local i32 @main(i32 noundef %0, i8** noundef %1) #0 {
   %6 = alloca i32, align 4
   %7 = alloca double*, align 8
   %8 = alloca i32, align 4
+  %9 = alloca i64, align 8
+  %10 = alloca double, align 8
   store i32 0, i32* %3, align 4
   store i32 %0, i32* %4, align 4
   store i8** %1, i8*** %5, align 8
-  %9 = load i32, i32* %4, align 4
-  %10 = icmp eq i32 %9, 2
-  br i1 %10, label %11, label %16
-
-11:                                               ; preds = %2
-  %12 = load i8**, i8*** %5, align 8
-  %13 = getelementptr inbounds i8*, i8** %12, i64 1
-  %14 = load i8*, i8** %13, align 8
-  %15 = call i32 @atoi(i8* noundef %14) #4
-  br label %17
-
-16:                                               ; preds = %2
-  br label %17
-
-17:                                               ; preds = %16, %11
-  %18 = phi i32 [ %15, %11 ], [ 8000000, %16 ]
-  store i32 %18, i32* %6, align 4
-  %19 = load i32, i32* %6, align 4
-  %20 = add nsw i32 %19, 1
-  %21 = sext i32 %20 to i64
-  %22 = mul i64 %21, 8
-  %23 = call noalias i8* @malloc(i64 noundef %22) #5
-  %24 = bitcast i8* %23 to double*
-  store double* %24, double** %7, align 8
+  store i32 8000000, i32* %6, align 4
+  %11 = call i64 @clock() #3
+  store i64 %11, i64* %9, align 8
+  %12 = load i32, i32* %6, align 4
+  %13 = add nsw i32 %12, 1
+  %14 = sext i32 %13 to i64
+  %15 = mul i64 %14, 8
+  %16 = call noalias i8* @malloc(i64 noundef %15) #3
+  %17 = bitcast i8* %16 to double*
+  store double* %17, double** %7, align 8
   store i32 1, i32* %8, align 4
-  br label %25
+  br label %18
 
-25:                                               ; preds = %35, %17
-  %26 = load i32, i32* %8, align 4
-  %27 = load i32, i32* %6, align 4
-  %28 = icmp sle i32 %26, %27
-  br i1 %28, label %29, label %38
+18:                                               ; preds = %28, %2
+  %19 = load i32, i32* %8, align 4
+  %20 = load i32, i32* %6, align 4
+  %21 = icmp sle i32 %19, %20
+  br i1 %21, label %22, label %31
 
-29:                                               ; preds = %25
-  %30 = call double @gen_random(double noundef 1.000000e+00)
-  %31 = load double*, double** %7, align 8
-  %32 = load i32, i32* %8, align 4
-  %33 = sext i32 %32 to i64
-  %34 = getelementptr inbounds double, double* %31, i64 %33
-  store double %30, double* %34, align 8
-  br label %35
+22:                                               ; preds = %18
+  %23 = call double @gen_random(double noundef 1.000000e+00)
+  %24 = load double*, double** %7, align 8
+  %25 = load i32, i32* %8, align 4
+  %26 = sext i32 %25 to i64
+  %27 = getelementptr inbounds double, double* %24, i64 %26
+  store double %23, double* %27, align 8
+  br label %28
 
-35:                                               ; preds = %29
-  %36 = load i32, i32* %8, align 4
-  %37 = add nsw i32 %36, 1
-  store i32 %37, i32* %8, align 4
-  br label %25, !llvm.loop !8
+28:                                               ; preds = %22
+  %29 = load i32, i32* %8, align 4
+  %30 = add nsw i32 %29, 1
+  store i32 %30, i32* %8, align 4
+  br label %18, !llvm.loop !8
 
-38:                                               ; preds = %25
-  %39 = load i32, i32* %6, align 4
-  %40 = load double*, double** %7, align 8
-  call void @benchmark_heapsort(i32 noundef %39, double* noundef %40)
-  %41 = load double*, double** %7, align 8
-  %42 = load i32, i32* %6, align 4
-  %43 = sext i32 %42 to i64
-  %44 = getelementptr inbounds double, double* %41, i64 %43
-  %45 = load double, double* %44, align 8
-  %46 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), double noundef %45)
+31:                                               ; preds = %18
+  %32 = load i32, i32* %6, align 4
+  %33 = load double*, double** %7, align 8
+  call void @benchmark_heapsort(i32 noundef %32, double* noundef %33)
+  %34 = load double*, double** %7, align 8
+  %35 = load i32, i32* %6, align 4
+  %36 = sext i32 %35 to i64
+  %37 = getelementptr inbounds double, double* %34, i64 %36
+  %38 = load double, double* %37, align 8
+  %39 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), double noundef %38)
+  %40 = call i64 @clock() #3
+  %41 = load i64, i64* %9, align 8
+  %42 = sub nsw i64 %40, %41
+  %43 = sitofp i64 %42 to double
+  %44 = fdiv double %43, 1.000000e+06
+  store double %44, double* %10, align 8
+  %45 = load double, double* %10, align 8
+  %46 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([11 x i8], [11 x i8]* @.str.1, i64 0, i64 0), double noundef %45)
   %47 = load double*, double** %7, align 8
   %48 = bitcast double* %47 to i8*
-  call void @free(i8* noundef %48) #5
+  call void @free(i8* noundef %48) #3
   ret i32 0
 }
 
-; Function Attrs: nounwind readonly willreturn
-declare i32 @atoi(i8* noundef) #1
+; Function Attrs: nounwind
+declare i64 @clock() #1
 
 ; Function Attrs: nounwind
-declare noalias i8* @malloc(i64 noundef) #2
+declare noalias i8* @malloc(i64 noundef) #1
 
-declare i32 @printf(i8* noundef, ...) #3
+declare i32 @printf(i8* noundef, ...) #2
 
 ; Function Attrs: nounwind
-declare void @free(i8* noundef) #2
+declare void @free(i8* noundef) #1
 
 attributes #0 = { noinline nounwind optnone uwtable "frame-pointer"="all" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #1 = { nounwind readonly willreturn "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #2 = { nounwind "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #3 = { "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #4 = { nounwind readonly willreturn }
-attributes #5 = { nounwind }
+attributes #1 = { nounwind "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #2 = { "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #3 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3, !4}
 !llvm.ident = !{!5}

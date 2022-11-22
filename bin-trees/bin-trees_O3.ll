@@ -8,6 +8,7 @@ target triple = "x86_64-pc-linux-gnu"
 @.str = private unnamed_addr constant [38 x i8] c"stretch tree of depth %u\09 check: %li\0A\00", align 1
 @.str.1 = private unnamed_addr constant [36 x i8] c"%li\09 trees of depth %u\09 check: %li\0A\00", align 1
 @.str.2 = private unnamed_addr constant [41 x i8] c"long lived tree of depth %u\09 check: %li\0A\00", align 1
+@.str.3 = private unnamed_addr constant [11 x i8] c"Time: %lf\0A\00", align 1
 
 ; Function Attrs: mustprogress nofree nounwind uwtable willreturn
 define dso_local noalias %struct.tn* @NewTreeNode(%struct.tn* noundef %0, %struct.tn* noundef %1) local_unnamed_addr #0 {
@@ -104,60 +105,221 @@ define dso_local void @DeleteTree(%struct.tn* nocapture noundef %0) local_unname
 declare void @free(i8* nocapture noundef) local_unnamed_addr #5
 
 ; Function Attrs: nounwind uwtable
-define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readonly %1) local_unnamed_addr #4 {
-  %3 = getelementptr inbounds i8*, i8** %1, i64 1
-  %4 = load i8*, i8** %3, align 8, !tbaa !11
-  %5 = tail call i64 @strtol(i8* nocapture noundef nonnull %4, i8** noundef null, i32 noundef 10) #9
-  %6 = trunc i64 %5 to i32
-  %7 = icmp ugt i32 %6, 6
-  %8 = select i1 %7, i32 %6, i32 6
-  %9 = add i32 %8, 1
-  %10 = tail call %struct.tn* @BottomUpTree(i32 noundef %9)
-  %11 = tail call i64 @ItemCheck(%struct.tn* noundef %10)
-  %12 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([38 x i8], [38 x i8]* @.str, i64 0, i64 0), i32 noundef %9, i64 noundef %11)
-  tail call void @DeleteTree(%struct.tn* noundef %10)
-  %13 = tail call %struct.tn* @BottomUpTree(i32 noundef %8)
-  %14 = add i32 %8, 4
-  br label %15
+define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readnone %1) local_unnamed_addr #4 {
+  %3 = tail call i64 @clock() #9
+  %4 = tail call %struct.tn* @BottomUpTree(i32 noundef 21)
+  %5 = tail call i64 @ItemCheck(%struct.tn* noundef %4)
+  %6 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([38 x i8], [38 x i8]* @.str, i64 0, i64 0), i32 noundef 21, i64 noundef %5)
+  tail call void @DeleteTree(%struct.tn* noundef %4)
+  %7 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %8 = tail call double @exp2(double 2.000000e+01) #9
+  br label %9
 
-15:                                               ; preds = %2, %30
-  %16 = phi i32 [ 4, %2 ], [ %33, %30 ]
-  %17 = sub i32 %14, %16
-  %18 = uitofp i32 %17 to double
-  %19 = tail call double @exp2(double %18) #9
-  %20 = fptosi double %19 to i64
-  %21 = icmp slt i64 %20, 1
-  br i1 %21, label %30, label %22
+9:                                                ; preds = %2, %9
+  %10 = phi i64 [ %14, %9 ], [ 0, %2 ]
+  %11 = phi i64 [ %15, %9 ], [ 1, %2 ]
+  %12 = tail call %struct.tn* @BottomUpTree(i32 noundef 4)
+  %13 = tail call i64 @ItemCheck(%struct.tn* noundef %12)
+  %14 = add nsw i64 %13, %10
+  tail call void @DeleteTree(%struct.tn* noundef %12)
+  %15 = add nuw i64 %11, 1
+  %16 = icmp eq i64 %15, 1048577
+  br i1 %16, label %17, label %9, !llvm.loop !11
 
-22:                                               ; preds = %15, %22
-  %23 = phi i64 [ %27, %22 ], [ 0, %15 ]
-  %24 = phi i64 [ %28, %22 ], [ 1, %15 ]
-  %25 = tail call %struct.tn* @BottomUpTree(i32 noundef %16)
-  %26 = tail call i64 @ItemCheck(%struct.tn* noundef %25)
-  %27 = add nsw i64 %26, %23
-  tail call void @DeleteTree(%struct.tn* noundef %25)
-  %28 = add nuw i64 %24, 1
-  %29 = icmp eq i64 %24, %20
-  br i1 %29, label %30, label %22, !llvm.loop !12
+17:                                               ; preds = %9
+  %18 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([36 x i8], [36 x i8]* @.str.1, i64 0, i64 0), i64 noundef 1048576, i32 noundef 4, i64 noundef %14)
+  %19 = tail call double @exp2(double 1.800000e+01) #9
+  br label %20
 
-30:                                               ; preds = %22, %15
-  %31 = phi i64 [ 0, %15 ], [ %27, %22 ]
-  %32 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([36 x i8], [36 x i8]* @.str.1, i64 0, i64 0), i64 noundef %20, i32 noundef %16, i64 noundef %31)
-  %33 = add i32 %16, 2
-  %34 = icmp ult i32 %8, %33
-  br i1 %34, label %35, label %15, !llvm.loop !14
+20:                                               ; preds = %20, %17
+  %21 = phi i64 [ %25, %20 ], [ 0, %17 ]
+  %22 = phi i64 [ %26, %20 ], [ 1, %17 ]
+  %23 = tail call %struct.tn* @BottomUpTree(i32 noundef 6)
+  %24 = tail call i64 @ItemCheck(%struct.tn* noundef %23)
+  %25 = add nsw i64 %24, %21
+  tail call void @DeleteTree(%struct.tn* noundef %23)
+  %26 = add nuw i64 %22, 1
+  %27 = icmp eq i64 %26, 262145
+  br i1 %27, label %28, label %20, !llvm.loop !11
 
-35:                                               ; preds = %30
-  %36 = tail call i64 @ItemCheck(%struct.tn* noundef %13)
-  %37 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([41 x i8], [41 x i8]* @.str.2, i64 0, i64 0), i32 noundef %8, i64 noundef %36)
+28:                                               ; preds = %20
+  %29 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([36 x i8], [36 x i8]* @.str.1, i64 0, i64 0), i64 noundef 262144, i32 noundef 6, i64 noundef %25)
+  %30 = tail call double @exp2(double 1.600000e+01) #9
+  br label %31
+
+31:                                               ; preds = %31, %28
+  %32 = phi i64 [ %36, %31 ], [ 0, %28 ]
+  %33 = phi i64 [ %37, %31 ], [ 1, %28 ]
+  %34 = tail call %struct.tn* @BottomUpTree(i32 noundef 8)
+  %35 = tail call i64 @ItemCheck(%struct.tn* noundef %34)
+  %36 = add nsw i64 %35, %32
+  tail call void @DeleteTree(%struct.tn* noundef %34)
+  %37 = add nuw i64 %33, 1
+  %38 = icmp eq i64 %37, 65537
+  br i1 %38, label %39, label %31, !llvm.loop !11
+
+39:                                               ; preds = %31
+  %40 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([36 x i8], [36 x i8]* @.str.1, i64 0, i64 0), i64 noundef 65536, i32 noundef 8, i64 noundef %36)
+  %41 = tail call double @exp2(double 1.400000e+01) #9
+  br label %42
+
+42:                                               ; preds = %42, %39
+  %43 = phi i64 [ %47, %42 ], [ 0, %39 ]
+  %44 = phi i64 [ %48, %42 ], [ 1, %39 ]
+  %45 = tail call %struct.tn* @BottomUpTree(i32 noundef 10)
+  %46 = tail call i64 @ItemCheck(%struct.tn* noundef %45)
+  %47 = add nsw i64 %46, %43
+  tail call void @DeleteTree(%struct.tn* noundef %45)
+  %48 = add nuw i64 %44, 1
+  %49 = icmp eq i64 %48, 16385
+  br i1 %49, label %50, label %42, !llvm.loop !11
+
+50:                                               ; preds = %42
+  %51 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([36 x i8], [36 x i8]* @.str.1, i64 0, i64 0), i64 noundef 16384, i32 noundef 10, i64 noundef %47)
+  %52 = tail call double @exp2(double 1.200000e+01) #9
+  br label %53
+
+53:                                               ; preds = %53, %50
+  %54 = phi i64 [ %58, %53 ], [ 0, %50 ]
+  %55 = phi i64 [ %59, %53 ], [ 1, %50 ]
+  %56 = tail call %struct.tn* @BottomUpTree(i32 noundef 12)
+  %57 = tail call i64 @ItemCheck(%struct.tn* noundef %56)
+  %58 = add nsw i64 %57, %54
+  tail call void @DeleteTree(%struct.tn* noundef %56)
+  %59 = add nuw i64 %55, 1
+  %60 = icmp eq i64 %59, 4097
+  br i1 %60, label %61, label %53, !llvm.loop !11
+
+61:                                               ; preds = %53
+  %62 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([36 x i8], [36 x i8]* @.str.1, i64 0, i64 0), i64 noundef 4096, i32 noundef 12, i64 noundef %58)
+  %63 = tail call double @exp2(double 1.000000e+01) #9
+  br label %64
+
+64:                                               ; preds = %64, %61
+  %65 = phi i64 [ %69, %64 ], [ 0, %61 ]
+  %66 = phi i64 [ %70, %64 ], [ 1, %61 ]
+  %67 = tail call %struct.tn* @BottomUpTree(i32 noundef 14)
+  %68 = tail call i64 @ItemCheck(%struct.tn* noundef %67)
+  %69 = add nsw i64 %68, %65
+  tail call void @DeleteTree(%struct.tn* noundef %67)
+  %70 = add nuw i64 %66, 1
+  %71 = icmp eq i64 %70, 1025
+  br i1 %71, label %72, label %64, !llvm.loop !11
+
+72:                                               ; preds = %64
+  %73 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([36 x i8], [36 x i8]* @.str.1, i64 0, i64 0), i64 noundef 1024, i32 noundef 14, i64 noundef %69)
+  %74 = tail call double @exp2(double 8.000000e+00) #9
+  br label %75
+
+75:                                               ; preds = %75, %72
+  %76 = phi i64 [ %80, %75 ], [ 0, %72 ]
+  %77 = phi i64 [ %81, %75 ], [ 1, %72 ]
+  %78 = tail call %struct.tn* @BottomUpTree(i32 noundef 16)
+  %79 = tail call i64 @ItemCheck(%struct.tn* noundef %78)
+  %80 = add nsw i64 %79, %76
+  tail call void @DeleteTree(%struct.tn* noundef %78)
+  %81 = add nuw i64 %77, 1
+  %82 = icmp eq i64 %81, 257
+  br i1 %82, label %83, label %75, !llvm.loop !11
+
+83:                                               ; preds = %75
+  %84 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([36 x i8], [36 x i8]* @.str.1, i64 0, i64 0), i64 noundef 256, i32 noundef 16, i64 noundef %80)
+  %85 = tail call double @exp2(double 6.000000e+00) #9
+  br label %86
+
+86:                                               ; preds = %86, %83
+  %87 = phi i64 [ %91, %86 ], [ 0, %83 ]
+  %88 = phi i64 [ %92, %86 ], [ 1, %83 ]
+  %89 = tail call %struct.tn* @BottomUpTree(i32 noundef 18)
+  %90 = tail call i64 @ItemCheck(%struct.tn* noundef %89)
+  %91 = add nsw i64 %90, %87
+  tail call void @DeleteTree(%struct.tn* noundef %89)
+  %92 = add nuw i64 %88, 1
+  %93 = icmp eq i64 %92, 65
+  br i1 %93, label %94, label %86, !llvm.loop !11
+
+94:                                               ; preds = %86
+  %95 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([36 x i8], [36 x i8]* @.str.1, i64 0, i64 0), i64 noundef 64, i32 noundef 18, i64 noundef %91)
+  %96 = tail call double @exp2(double 4.000000e+00) #9
+  %97 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %98 = tail call i64 @ItemCheck(%struct.tn* noundef %97)
+  tail call void @DeleteTree(%struct.tn* noundef %97)
+  %99 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %100 = tail call i64 @ItemCheck(%struct.tn* noundef %99)
+  %101 = add nsw i64 %100, %98
+  tail call void @DeleteTree(%struct.tn* noundef %99)
+  %102 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %103 = tail call i64 @ItemCheck(%struct.tn* noundef %102)
+  %104 = add nsw i64 %103, %101
+  tail call void @DeleteTree(%struct.tn* noundef %102)
+  %105 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %106 = tail call i64 @ItemCheck(%struct.tn* noundef %105)
+  %107 = add nsw i64 %106, %104
+  tail call void @DeleteTree(%struct.tn* noundef %105)
+  %108 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %109 = tail call i64 @ItemCheck(%struct.tn* noundef %108)
+  %110 = add nsw i64 %109, %107
+  tail call void @DeleteTree(%struct.tn* noundef %108)
+  %111 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %112 = tail call i64 @ItemCheck(%struct.tn* noundef %111)
+  %113 = add nsw i64 %112, %110
+  tail call void @DeleteTree(%struct.tn* noundef %111)
+  %114 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %115 = tail call i64 @ItemCheck(%struct.tn* noundef %114)
+  %116 = add nsw i64 %115, %113
+  tail call void @DeleteTree(%struct.tn* noundef %114)
+  %117 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %118 = tail call i64 @ItemCheck(%struct.tn* noundef %117)
+  %119 = add nsw i64 %118, %116
+  tail call void @DeleteTree(%struct.tn* noundef %117)
+  %120 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %121 = tail call i64 @ItemCheck(%struct.tn* noundef %120)
+  %122 = add nsw i64 %121, %119
+  tail call void @DeleteTree(%struct.tn* noundef %120)
+  %123 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %124 = tail call i64 @ItemCheck(%struct.tn* noundef %123)
+  %125 = add nsw i64 %124, %122
+  tail call void @DeleteTree(%struct.tn* noundef %123)
+  %126 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %127 = tail call i64 @ItemCheck(%struct.tn* noundef %126)
+  %128 = add nsw i64 %127, %125
+  tail call void @DeleteTree(%struct.tn* noundef %126)
+  %129 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %130 = tail call i64 @ItemCheck(%struct.tn* noundef %129)
+  %131 = add nsw i64 %130, %128
+  tail call void @DeleteTree(%struct.tn* noundef %129)
+  %132 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %133 = tail call i64 @ItemCheck(%struct.tn* noundef %132)
+  %134 = add nsw i64 %133, %131
+  tail call void @DeleteTree(%struct.tn* noundef %132)
+  %135 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %136 = tail call i64 @ItemCheck(%struct.tn* noundef %135)
+  %137 = add nsw i64 %136, %134
+  tail call void @DeleteTree(%struct.tn* noundef %135)
+  %138 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %139 = tail call i64 @ItemCheck(%struct.tn* noundef %138)
+  %140 = add nsw i64 %139, %137
+  tail call void @DeleteTree(%struct.tn* noundef %138)
+  %141 = tail call %struct.tn* @BottomUpTree(i32 noundef 20)
+  %142 = tail call i64 @ItemCheck(%struct.tn* noundef %141)
+  %143 = add nsw i64 %142, %140
+  tail call void @DeleteTree(%struct.tn* noundef %141)
+  %144 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([36 x i8], [36 x i8]* @.str.1, i64 0, i64 0), i64 noundef 16, i32 noundef 20, i64 noundef %143)
+  %145 = tail call i64 @ItemCheck(%struct.tn* noundef %7)
+  %146 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([41 x i8], [41 x i8]* @.str.2, i64 0, i64 0), i32 noundef 20, i64 noundef %145)
+  %147 = tail call i64 @clock() #9
+  %148 = sub nsw i64 %147, %3
+  %149 = sitofp i64 %148 to double
+  %150 = fdiv double %149, 1.000000e+06
+  %151 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([11 x i8], [11 x i8]* @.str.3, i64 0, i64 0), double noundef %150)
   ret i32 0
 }
 
-; Function Attrs: nofree nounwind
-declare noundef i32 @printf(i8* nocapture noundef readonly, ...) local_unnamed_addr #6
+; Function Attrs: nounwind
+declare i64 @clock() local_unnamed_addr #6
 
-; Function Attrs: mustprogress nofree nounwind willreturn
-declare i64 @strtol(i8* noundef readonly, i8** nocapture noundef, i32 noundef) local_unnamed_addr #7
+; Function Attrs: nofree nounwind
+declare noundef i32 @printf(i8* nocapture noundef readonly, ...) local_unnamed_addr #7
 
 declare double @exp2(double) local_unnamed_addr
 
@@ -170,8 +332,8 @@ attributes #2 = { nofree nosync nounwind readonly uwtable "frame-pointer"="none"
 attributes #3 = { nofree nounwind uwtable "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #4 = { nounwind uwtable "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #5 = { inaccessiblemem_or_argmemonly mustprogress nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #6 = { nofree nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #7 = { mustprogress nofree nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #6 = { nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #7 = { nofree nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #8 = { inaccessiblememonly nofree nounwind willreturn }
 attributes #9 = { nounwind }
 
@@ -189,7 +351,5 @@ attributes #9 = { nounwind }
 !8 = !{!"omnipotent char", !9, i64 0}
 !9 = !{!"Simple C/C++ TBAA"}
 !10 = !{!6, !7, i64 8}
-!11 = !{!7, !7, i64 0}
-!12 = distinct !{!12, !13}
-!13 = !{!"llvm.loop.mustprogress"}
-!14 = distinct !{!14, !13}
+!11 = distinct !{!11, !12}
+!12 = !{!"llvm.loop.mustprogress"}

@@ -4,6 +4,7 @@ target datalayout = "e-m:e-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16
 target triple = "x86_64-pc-linux-gnu"
 
 @.str = private unnamed_addr constant [7 x i8] c"%0.9f\0A\00", align 1
+@.str.1 = private unnamed_addr constant [11 x i8] c"Time: %lf\0A\00", align 1
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind readnone uwtable willreturn
 define dso_local double @eval_A(i32 noundef %0, i32 noundef %1) local_unnamed_addr #0 {
@@ -145,7 +146,7 @@ define dso_local void @eval_AtA_times_u(i32 noundef %0, double* nocapture nounde
   %25 = fdiv double 1.000000e+00, %24
   %26 = getelementptr inbounds double, double* %1, i64 %16
   %27 = load double, double* %26, align 8, !tbaa !5
-  %28 = tail call double @llvm.fmuladd.f64(double %25, double %27, double %15) #8
+  %28 = tail call double @llvm.fmuladd.f64(double %25, double %27, double %15) #10
   %29 = add nuw nsw i64 %16, 1
   %30 = icmp eq i64 %29, %4
   br i1 %30, label %31, label %14, !llvm.loop !9
@@ -178,7 +179,7 @@ define dso_local void @eval_AtA_times_u(i32 noundef %0, double* nocapture nounde
   %51 = fdiv double 1.000000e+00, %50
   %52 = getelementptr inbounds double, double* %5, i64 %40
   %53 = load double, double* %52, align 8, !tbaa !5
-  %54 = tail call double @llvm.fmuladd.f64(double %51, double %53, double %39) #8
+  %54 = tail call double @llvm.fmuladd.f64(double %51, double %53, double %39) #10
   %55 = icmp eq i64 %47, %4
   br i1 %55, label %56, label %38, !llvm.loop !12
 
@@ -192,264 +193,285 @@ define dso_local void @eval_AtA_times_u(i32 noundef %0, double* nocapture nounde
   ret void
 }
 
-; Function Attrs: nofree nounwind uwtable
-define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readonly %1) local_unnamed_addr #3 {
-  %3 = icmp eq i32 %0, 2
-  br i1 %3, label %9, label %4
+; Function Attrs: mustprogress nofree nosync nounwind willreturn
+declare i8* @llvm.stacksave() #3
 
-4:                                                ; preds = %2
-  %5 = alloca [2000 x double], align 16
-  %6 = alloca [2000 x double], align 16
-  %7 = getelementptr inbounds [2000 x double], [2000 x double]* %6, i64 0, i64 0
-  %8 = getelementptr inbounds [2000 x double], [2000 x double]* %5, i64 0, i64 0
-  br label %18
+; Function Attrs: mustprogress nofree nosync nounwind willreturn
+declare void @llvm.stackrestore(i8*) #3
 
-9:                                                ; preds = %2
-  %10 = getelementptr inbounds i8*, i8** %1, i64 1
-  %11 = load i8*, i8** %10, align 8, !tbaa !14
-  %12 = tail call i64 @strtol(i8* nocapture noundef nonnull %11, i8** noundef null, i32 noundef 10) #8
-  %13 = trunc i64 %12 to i32
-  %14 = and i64 %12, 4294967295
-  %15 = alloca double, i64 %14, align 16
-  %16 = alloca double, i64 %14, align 16
-  %17 = icmp sgt i32 %13, 0
-  br i1 %17, label %18, label %95
+; Function Attrs: nounwind uwtable
+define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readnone %1) local_unnamed_addr #4 {
+  %3 = alloca [5000 x double], align 16
+  %4 = alloca [5000 x double], align 16
+  %5 = alloca [5000 x double], align 16
+  %6 = alloca [5000 x double], align 16
+  br label %7
 
-18:                                               ; preds = %4, %9
-  %19 = phi double* [ %7, %4 ], [ %16, %9 ]
-  %20 = phi double* [ %8, %4 ], [ %15, %9 ]
-  %21 = phi i64 [ 2000, %4 ], [ %14, %9 ]
-  %22 = phi i32 [ 2000, %4 ], [ %13, %9 ]
-  %23 = icmp ult i64 %21, 4
-  br i1 %23, label %93, label %24
+7:                                                ; preds = %7, %2
+  %8 = phi i64 [ 0, %2 ], [ %33, %7 ]
+  %9 = getelementptr inbounds [5000 x double], [5000 x double]* %5, i64 0, i64 %8
+  %10 = bitcast double* %9 to <2 x double>*
+  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %10, align 16, !tbaa !5
+  %11 = getelementptr inbounds double, double* %9, i64 2
+  %12 = bitcast double* %11 to <2 x double>*
+  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %12, align 16, !tbaa !5
+  %13 = add nuw nsw i64 %8, 4
+  %14 = getelementptr inbounds [5000 x double], [5000 x double]* %5, i64 0, i64 %13
+  %15 = bitcast double* %14 to <2 x double>*
+  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %15, align 16, !tbaa !5
+  %16 = getelementptr inbounds double, double* %14, i64 2
+  %17 = bitcast double* %16 to <2 x double>*
+  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %17, align 16, !tbaa !5
+  %18 = add nuw nsw i64 %8, 8
+  %19 = getelementptr inbounds [5000 x double], [5000 x double]* %5, i64 0, i64 %18
+  %20 = bitcast double* %19 to <2 x double>*
+  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %20, align 16, !tbaa !5
+  %21 = getelementptr inbounds double, double* %19, i64 2
+  %22 = bitcast double* %21 to <2 x double>*
+  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %22, align 16, !tbaa !5
+  %23 = add nuw nsw i64 %8, 12
+  %24 = getelementptr inbounds [5000 x double], [5000 x double]* %5, i64 0, i64 %23
+  %25 = bitcast double* %24 to <2 x double>*
+  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %25, align 16, !tbaa !5
+  %26 = getelementptr inbounds double, double* %24, i64 2
+  %27 = bitcast double* %26 to <2 x double>*
+  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %27, align 16, !tbaa !5
+  %28 = add nuw nsw i64 %8, 16
+  %29 = getelementptr inbounds [5000 x double], [5000 x double]* %5, i64 0, i64 %28
+  %30 = bitcast double* %29 to <2 x double>*
+  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %30, align 16, !tbaa !5
+  %31 = getelementptr inbounds double, double* %29, i64 2
+  %32 = bitcast double* %31 to <2 x double>*
+  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %32, align 16, !tbaa !5
+  %33 = add nuw nsw i64 %8, 20
+  %34 = icmp eq i64 %33, 5000
+  br i1 %34, label %35, label %7, !llvm.loop !14
 
-24:                                               ; preds = %18
-  %25 = and i64 %21, 4294967292
-  %26 = add nsw i64 %25, -4
-  %27 = lshr exact i64 %26, 2
-  %28 = add nuw nsw i64 %27, 1
-  %29 = and i64 %28, 7
-  %30 = icmp ult i64 %26, 28
-  br i1 %30, label %78, label %31
+35:                                               ; preds = %7
+  %36 = tail call i64 @clock() #10
+  %37 = bitcast [5000 x double]* %4 to i8*
+  %38 = bitcast [5000 x double]* %3 to i8*
+  br label %39
 
-31:                                               ; preds = %24
-  %32 = and i64 %28, 9223372036854775800
-  br label %33
+39:                                               ; preds = %35, %148
+  %40 = phi i32 [ 0, %35 ], [ %149, %148 ]
+  %41 = tail call i8* @llvm.stacksave()
+  call void @llvm.lifetime.start.p0i8(i64 40000, i8* nonnull %37)
+  br label %42
 
-33:                                               ; preds = %33, %31
-  %34 = phi i64 [ 0, %31 ], [ %75, %33 ]
-  %35 = phi i64 [ 0, %31 ], [ %76, %33 ]
-  %36 = getelementptr inbounds double, double* %20, i64 %34
-  %37 = bitcast double* %36 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %37, align 8, !tbaa !5
-  %38 = getelementptr inbounds double, double* %36, i64 2
-  %39 = bitcast double* %38 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %39, align 8, !tbaa !5
-  %40 = or i64 %34, 4
-  %41 = getelementptr inbounds double, double* %20, i64 %40
-  %42 = bitcast double* %41 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %42, align 8, !tbaa !5
-  %43 = getelementptr inbounds double, double* %41, i64 2
-  %44 = bitcast double* %43 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %44, align 8, !tbaa !5
-  %45 = or i64 %34, 8
-  %46 = getelementptr inbounds double, double* %20, i64 %45
-  %47 = bitcast double* %46 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %47, align 8, !tbaa !5
-  %48 = getelementptr inbounds double, double* %46, i64 2
-  %49 = bitcast double* %48 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %49, align 8, !tbaa !5
-  %50 = or i64 %34, 12
-  %51 = getelementptr inbounds double, double* %20, i64 %50
-  %52 = bitcast double* %51 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %52, align 8, !tbaa !5
-  %53 = getelementptr inbounds double, double* %51, i64 2
-  %54 = bitcast double* %53 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %54, align 8, !tbaa !5
-  %55 = or i64 %34, 16
-  %56 = getelementptr inbounds double, double* %20, i64 %55
-  %57 = bitcast double* %56 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %57, align 8, !tbaa !5
-  %58 = getelementptr inbounds double, double* %56, i64 2
-  %59 = bitcast double* %58 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %59, align 8, !tbaa !5
-  %60 = or i64 %34, 20
-  %61 = getelementptr inbounds double, double* %20, i64 %60
-  %62 = bitcast double* %61 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %62, align 8, !tbaa !5
-  %63 = getelementptr inbounds double, double* %61, i64 2
-  %64 = bitcast double* %63 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %64, align 8, !tbaa !5
-  %65 = or i64 %34, 24
-  %66 = getelementptr inbounds double, double* %20, i64 %65
-  %67 = bitcast double* %66 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %67, align 8, !tbaa !5
-  %68 = getelementptr inbounds double, double* %66, i64 2
-  %69 = bitcast double* %68 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %69, align 8, !tbaa !5
-  %70 = or i64 %34, 28
-  %71 = getelementptr inbounds double, double* %20, i64 %70
-  %72 = bitcast double* %71 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %72, align 8, !tbaa !5
-  %73 = getelementptr inbounds double, double* %71, i64 2
-  %74 = bitcast double* %73 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %74, align 8, !tbaa !5
-  %75 = add nuw i64 %34, 32
-  %76 = add i64 %35, 8
-  %77 = icmp eq i64 %76, %32
-  br i1 %77, label %78, label %33, !llvm.loop !16
+42:                                               ; preds = %65, %39
+  %43 = phi i64 [ %44, %65 ], [ 0, %39 ]
+  %44 = add nuw nsw i64 %43, 1
+  %45 = trunc i64 %43 to i32
+  %46 = trunc i64 %44 to i32
+  %47 = add i32 %45, 1
+  br label %48
 
-78:                                               ; preds = %33, %24
-  %79 = phi i64 [ 0, %24 ], [ %75, %33 ]
-  %80 = icmp eq i64 %29, 0
-  br i1 %80, label %91, label %81
+48:                                               ; preds = %48, %42
+  %49 = phi double [ 0.000000e+00, %42 ], [ %62, %48 ]
+  %50 = phi i64 [ 0, %42 ], [ %63, %48 ]
+  %51 = trunc i64 %50 to i32
+  %52 = add nuw nsw i64 %50, %43
+  %53 = add i32 %47, %51
+  %54 = trunc i64 %52 to i32
+  %55 = mul nsw i32 %53, %54
+  %56 = lshr i32 %55, 1
+  %57 = add i32 %56, %46
+  %58 = sitofp i32 %57 to double
+  %59 = fdiv double 1.000000e+00, %58
+  %60 = getelementptr inbounds [5000 x double], [5000 x double]* %5, i64 0, i64 %50
+  %61 = load double, double* %60, align 8, !tbaa !5
+  %62 = tail call double @llvm.fmuladd.f64(double %59, double %61, double %49) #10
+  %63 = add nuw nsw i64 %50, 1
+  %64 = icmp eq i64 %63, 5000
+  br i1 %64, label %65, label %48, !llvm.loop !9
 
-81:                                               ; preds = %78, %81
-  %82 = phi i64 [ %88, %81 ], [ %79, %78 ]
-  %83 = phi i64 [ %89, %81 ], [ 0, %78 ]
-  %84 = getelementptr inbounds double, double* %20, i64 %82
-  %85 = bitcast double* %84 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %85, align 8, !tbaa !5
-  %86 = getelementptr inbounds double, double* %84, i64 2
-  %87 = bitcast double* %86 to <2 x double>*
-  store <2 x double> <double 1.000000e+00, double 1.000000e+00>, <2 x double>* %87, align 8, !tbaa !5
-  %88 = add nuw i64 %82, 4
-  %89 = add i64 %83, 1
-  %90 = icmp eq i64 %89, %29
-  br i1 %90, label %91, label %81, !llvm.loop !18
+65:                                               ; preds = %48
+  %66 = getelementptr inbounds [5000 x double], [5000 x double]* %4, i64 0, i64 %43
+  store double %62, double* %66, align 8, !tbaa !5
+  %67 = icmp eq i64 %44, 5000
+  br i1 %67, label %68, label %42, !llvm.loop !11
 
-91:                                               ; preds = %81, %78
-  %92 = icmp eq i64 %21, %25
-  br i1 %92, label %95, label %93
+68:                                               ; preds = %65, %90
+  %69 = phi i64 [ %92, %90 ], [ 0, %65 ]
+  %70 = trunc i64 %69 to i32
+  %71 = add i32 %70, 1
+  br label %72
 
-93:                                               ; preds = %18, %91
-  %94 = phi i64 [ 0, %18 ], [ %25, %91 ]
-  br label %106
+72:                                               ; preds = %72, %68
+  %73 = phi double [ 0.000000e+00, %68 ], [ %88, %72 ]
+  %74 = phi i64 [ 0, %68 ], [ %81, %72 ]
+  %75 = trunc i64 %74 to i32
+  %76 = add nuw nsw i64 %74, %69
+  %77 = add i32 %71, %75
+  %78 = trunc i64 %76 to i32
+  %79 = mul nsw i32 %77, %78
+  %80 = lshr i32 %79, 1
+  %81 = add nuw nsw i64 %74, 1
+  %82 = trunc i64 %81 to i32
+  %83 = add nuw i32 %80, %82
+  %84 = sitofp i32 %83 to double
+  %85 = fdiv double 1.000000e+00, %84
+  %86 = getelementptr inbounds [5000 x double], [5000 x double]* %4, i64 0, i64 %74
+  %87 = load double, double* %86, align 8, !tbaa !5
+  %88 = tail call double @llvm.fmuladd.f64(double %85, double %87, double %73) #10
+  %89 = icmp eq i64 %81, 5000
+  br i1 %89, label %90, label %72, !llvm.loop !12
 
-95:                                               ; preds = %106, %91, %9
-  %96 = phi i1 [ false, %9 ], [ true, %91 ], [ true, %106 ]
-  %97 = phi double* [ %16, %9 ], [ %19, %91 ], [ %19, %106 ]
-  %98 = phi double* [ %15, %9 ], [ %20, %91 ], [ %20, %106 ]
-  %99 = phi i64 [ %14, %9 ], [ %21, %91 ], [ %21, %106 ]
-  %100 = phi i32 [ %13, %9 ], [ %22, %91 ], [ %22, %106 ]
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %98, double* noundef nonnull %97)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %97, double* noundef nonnull %98)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %98, double* noundef nonnull %97)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %97, double* noundef nonnull %98)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %98, double* noundef nonnull %97)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %97, double* noundef nonnull %98)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %98, double* noundef nonnull %97)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %97, double* noundef nonnull %98)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %98, double* noundef nonnull %97)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %97, double* noundef nonnull %98)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %98, double* noundef nonnull %97)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %97, double* noundef nonnull %98)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %98, double* noundef nonnull %97)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %97, double* noundef nonnull %98)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %98, double* noundef nonnull %97)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %97, double* noundef nonnull %98)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %98, double* noundef nonnull %97)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %97, double* noundef nonnull %98)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %98, double* noundef nonnull %97)
-  call void @eval_AtA_times_u(i32 noundef %100, double* noundef nonnull %97, double* noundef nonnull %98)
-  br i1 %96, label %101, label %154
+90:                                               ; preds = %72
+  %91 = getelementptr inbounds [5000 x double], [5000 x double]* %6, i64 0, i64 %69
+  store double %88, double* %91, align 8, !tbaa !5
+  %92 = add nuw nsw i64 %69, 1
+  %93 = icmp eq i64 %92, 5000
+  br i1 %93, label %94, label %68, !llvm.loop !13
 
-101:                                              ; preds = %95
-  %102 = and i64 %99, 1
-  %103 = icmp eq i64 %99, 1
-  br i1 %103, label %135, label %104
+94:                                               ; preds = %90
+  call void @llvm.lifetime.end.p0i8(i64 40000, i8* nonnull %37)
+  tail call void @llvm.stackrestore(i8* %41)
+  %95 = tail call i8* @llvm.stacksave()
+  call void @llvm.lifetime.start.p0i8(i64 40000, i8* nonnull %38)
+  br label %96
 
-104:                                              ; preds = %101
-  %105 = and i64 %99, -2
-  br label %111
+96:                                               ; preds = %119, %94
+  %97 = phi i64 [ %98, %119 ], [ 0, %94 ]
+  %98 = add nuw nsw i64 %97, 1
+  %99 = trunc i64 %97 to i32
+  %100 = trunc i64 %98 to i32
+  %101 = add i32 %99, 1
+  br label %102
 
-106:                                              ; preds = %93, %106
-  %107 = phi i64 [ %109, %106 ], [ %94, %93 ]
-  %108 = getelementptr inbounds double, double* %20, i64 %107
-  store double 1.000000e+00, double* %108, align 8, !tbaa !5
-  %109 = add nuw nsw i64 %107, 1
-  %110 = icmp eq i64 %109, %21
-  br i1 %110, label %95, label %106, !llvm.loop !20
+102:                                              ; preds = %102, %96
+  %103 = phi double [ 0.000000e+00, %96 ], [ %116, %102 ]
+  %104 = phi i64 [ 0, %96 ], [ %117, %102 ]
+  %105 = trunc i64 %104 to i32
+  %106 = add nuw nsw i64 %104, %97
+  %107 = add i32 %101, %105
+  %108 = trunc i64 %106 to i32
+  %109 = mul nsw i32 %107, %108
+  %110 = lshr i32 %109, 1
+  %111 = add i32 %110, %100
+  %112 = sitofp i32 %111 to double
+  %113 = fdiv double 1.000000e+00, %112
+  %114 = getelementptr inbounds [5000 x double], [5000 x double]* %6, i64 0, i64 %104
+  %115 = load double, double* %114, align 8, !tbaa !5
+  %116 = tail call double @llvm.fmuladd.f64(double %113, double %115, double %103) #10
+  %117 = add nuw nsw i64 %104, 1
+  %118 = icmp eq i64 %117, 5000
+  br i1 %118, label %119, label %102, !llvm.loop !9
 
-111:                                              ; preds = %111, %104
-  %112 = phi i64 [ 0, %104 ], [ %132, %111 ]
-  %113 = phi <2 x double> [ zeroinitializer, %104 ], [ %131, %111 ]
-  %114 = phi i64 [ 0, %104 ], [ %133, %111 ]
-  %115 = getelementptr inbounds double, double* %98, i64 %112
-  %116 = load double, double* %115, align 8, !tbaa !5
-  %117 = getelementptr inbounds double, double* %97, i64 %112
-  %118 = load double, double* %117, align 8, !tbaa !5
-  %119 = insertelement <2 x double> poison, double %118, i64 0
-  %120 = insertelement <2 x double> %119, double %116, i64 1
-  %121 = shufflevector <2 x double> %119, <2 x double> poison, <2 x i32> zeroinitializer
-  %122 = call <2 x double> @llvm.fmuladd.v2f64(<2 x double> %120, <2 x double> %121, <2 x double> %113)
-  %123 = or i64 %112, 1
-  %124 = getelementptr inbounds double, double* %98, i64 %123
-  %125 = load double, double* %124, align 8, !tbaa !5
-  %126 = getelementptr inbounds double, double* %97, i64 %123
-  %127 = load double, double* %126, align 8, !tbaa !5
-  %128 = insertelement <2 x double> poison, double %127, i64 0
-  %129 = insertelement <2 x double> %128, double %125, i64 1
-  %130 = shufflevector <2 x double> %128, <2 x double> poison, <2 x i32> zeroinitializer
-  %131 = call <2 x double> @llvm.fmuladd.v2f64(<2 x double> %129, <2 x double> %130, <2 x double> %122)
-  %132 = add nuw nsw i64 %112, 2
-  %133 = add i64 %114, 2
-  %134 = icmp eq i64 %133, %105
-  br i1 %134, label %135, label %111, !llvm.loop !22
+119:                                              ; preds = %102
+  %120 = getelementptr inbounds [5000 x double], [5000 x double]* %3, i64 0, i64 %97
+  store double %116, double* %120, align 8, !tbaa !5
+  %121 = icmp eq i64 %98, 5000
+  br i1 %121, label %122, label %96, !llvm.loop !11
 
-135:                                              ; preds = %111, %101
-  %136 = phi <2 x double> [ undef, %101 ], [ %131, %111 ]
-  %137 = phi i64 [ 0, %101 ], [ %132, %111 ]
-  %138 = phi <2 x double> [ zeroinitializer, %101 ], [ %131, %111 ]
-  %139 = icmp eq i64 %102, 0
-  br i1 %139, label %149, label %140
+122:                                              ; preds = %119, %144
+  %123 = phi i64 [ %146, %144 ], [ 0, %119 ]
+  %124 = trunc i64 %123 to i32
+  %125 = add i32 %124, 1
+  br label %126
 
-140:                                              ; preds = %135
-  %141 = getelementptr inbounds double, double* %98, i64 %137
-  %142 = load double, double* %141, align 8, !tbaa !5
-  %143 = getelementptr inbounds double, double* %97, i64 %137
-  %144 = load double, double* %143, align 8, !tbaa !5
-  %145 = insertelement <2 x double> poison, double %144, i64 0
-  %146 = insertelement <2 x double> %145, double %142, i64 1
-  %147 = shufflevector <2 x double> %145, <2 x double> poison, <2 x i32> zeroinitializer
-  %148 = call <2 x double> @llvm.fmuladd.v2f64(<2 x double> %146, <2 x double> %147, <2 x double> %138)
-  br label %149
+126:                                              ; preds = %126, %122
+  %127 = phi double [ 0.000000e+00, %122 ], [ %142, %126 ]
+  %128 = phi i64 [ 0, %122 ], [ %135, %126 ]
+  %129 = trunc i64 %128 to i32
+  %130 = add nuw nsw i64 %128, %123
+  %131 = add i32 %125, %129
+  %132 = trunc i64 %130 to i32
+  %133 = mul nsw i32 %131, %132
+  %134 = lshr i32 %133, 1
+  %135 = add nuw nsw i64 %128, 1
+  %136 = trunc i64 %135 to i32
+  %137 = add nuw i32 %134, %136
+  %138 = sitofp i32 %137 to double
+  %139 = fdiv double 1.000000e+00, %138
+  %140 = getelementptr inbounds [5000 x double], [5000 x double]* %3, i64 0, i64 %128
+  %141 = load double, double* %140, align 8, !tbaa !5
+  %142 = tail call double @llvm.fmuladd.f64(double %139, double %141, double %127) #10
+  %143 = icmp eq i64 %135, 5000
+  br i1 %143, label %144, label %126, !llvm.loop !12
 
-149:                                              ; preds = %135, %140
-  %150 = phi <2 x double> [ %136, %135 ], [ %148, %140 ]
-  %151 = extractelement <2 x double> %150, i64 0
-  %152 = extractelement <2 x double> %150, i64 1
-  %153 = fdiv double %152, %151
-  br label %154
+144:                                              ; preds = %126
+  %145 = getelementptr inbounds [5000 x double], [5000 x double]* %5, i64 0, i64 %123
+  store double %142, double* %145, align 8, !tbaa !5
+  %146 = add nuw nsw i64 %123, 1
+  %147 = icmp eq i64 %146, 5000
+  br i1 %147, label %148, label %122, !llvm.loop !13
 
-154:                                              ; preds = %149, %95
-  %155 = phi double [ %153, %149 ], [ 0x7FF8000000000000, %95 ]
-  %156 = tail call double @sqrt(double noundef %155) #8
-  %157 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i64 0, i64 0), double noundef %156)
+148:                                              ; preds = %144
+  call void @llvm.lifetime.end.p0i8(i64 40000, i8* nonnull %38)
+  tail call void @llvm.stackrestore(i8* %95)
+  %149 = add nuw nsw i32 %40, 1
+  %150 = icmp eq i32 %149, 10
+  br i1 %150, label %151, label %39, !llvm.loop !16
+
+151:                                              ; preds = %148, %151
+  %152 = phi i64 [ %171, %151 ], [ 0, %148 ]
+  %153 = phi <2 x double> [ %170, %151 ], [ zeroinitializer, %148 ]
+  %154 = getelementptr inbounds [5000 x double], [5000 x double]* %5, i64 0, i64 %152
+  %155 = load double, double* %154, align 16, !tbaa !5
+  %156 = getelementptr inbounds [5000 x double], [5000 x double]* %6, i64 0, i64 %152
+  %157 = load double, double* %156, align 16, !tbaa !5
+  %158 = insertelement <2 x double> poison, double %157, i64 0
+  %159 = insertelement <2 x double> %158, double %155, i64 1
+  %160 = shufflevector <2 x double> %158, <2 x double> poison, <2 x i32> zeroinitializer
+  %161 = call <2 x double> @llvm.fmuladd.v2f64(<2 x double> %159, <2 x double> %160, <2 x double> %153)
+  %162 = or i64 %152, 1
+  %163 = getelementptr inbounds [5000 x double], [5000 x double]* %5, i64 0, i64 %162
+  %164 = load double, double* %163, align 8, !tbaa !5
+  %165 = getelementptr inbounds [5000 x double], [5000 x double]* %6, i64 0, i64 %162
+  %166 = load double, double* %165, align 8, !tbaa !5
+  %167 = insertelement <2 x double> poison, double %166, i64 0
+  %168 = insertelement <2 x double> %167, double %164, i64 1
+  %169 = shufflevector <2 x double> %167, <2 x double> poison, <2 x i32> zeroinitializer
+  %170 = call <2 x double> @llvm.fmuladd.v2f64(<2 x double> %168, <2 x double> %169, <2 x double> %161)
+  %171 = add nuw nsw i64 %152, 2
+  %172 = icmp eq i64 %171, 5000
+  br i1 %172, label %173, label %151, !llvm.loop !17
+
+173:                                              ; preds = %151
+  %174 = extractelement <2 x double> %170, i64 0
+  %175 = extractelement <2 x double> %170, i64 1
+  %176 = fdiv double %175, %174
+  %177 = tail call double @sqrt(double noundef %176) #10
+  %178 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([7 x i8], [7 x i8]* @.str, i64 0, i64 0), double noundef %177)
+  %179 = tail call i64 @clock() #10
+  %180 = sub nsw i64 %179, %36
+  %181 = sitofp i64 %180 to double
+  %182 = fdiv double %181, 1.000000e+06
+  %183 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([11 x i8], [11 x i8]* @.str.1, i64 0, i64 0), double noundef %182)
   ret i32 0
 }
 
+; Function Attrs: nounwind
+declare i64 @clock() local_unnamed_addr #5
+
 ; Function Attrs: nofree nounwind
-declare noundef i32 @printf(i8* nocapture noundef readonly, ...) local_unnamed_addr #4
+declare noundef i32 @printf(i8* nocapture noundef readonly, ...) local_unnamed_addr #6
 
 ; Function Attrs: mustprogress nofree nounwind willreturn writeonly
-declare double @sqrt(double noundef) local_unnamed_addr #5
+declare double @sqrt(double noundef) local_unnamed_addr #7
 
-; Function Attrs: mustprogress nofree nounwind willreturn
-declare i64 @strtol(i8* noundef readonly, i8** nocapture noundef, i32 noundef) local_unnamed_addr #6
+; Function Attrs: argmemonly nofree nosync nounwind willreturn
+declare void @llvm.lifetime.start.p0i8(i64 immarg, i8* nocapture) #8
+
+; Function Attrs: argmemonly nofree nosync nounwind willreturn
+declare void @llvm.lifetime.end.p0i8(i64 immarg, i8* nocapture) #8
 
 ; Function Attrs: nofree nosync nounwind readnone speculatable willreturn
-declare <2 x double> @llvm.fmuladd.v2f64(<2 x double>, <2 x double>, <2 x double>) #7
+declare <2 x double> @llvm.fmuladd.v2f64(<2 x double>, <2 x double>, <2 x double>) #9
 
 attributes #0 = { mustprogress nofree norecurse nosync nounwind readnone uwtable willreturn "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #1 = { nofree nosync nounwind uwtable "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #2 = { mustprogress nofree nosync nounwind readnone speculatable willreturn }
-attributes #3 = { nofree nounwind uwtable "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #4 = { nofree nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #5 = { mustprogress nofree nounwind willreturn writeonly "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #6 = { mustprogress nofree nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #7 = { nofree nosync nounwind readnone speculatable willreturn }
-attributes #8 = { nounwind }
+attributes #3 = { mustprogress nofree nosync nounwind willreturn }
+attributes #4 = { nounwind uwtable "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #5 = { nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #6 = { nofree nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #7 = { mustprogress nofree nounwind willreturn writeonly "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #8 = { argmemonly nofree nosync nounwind willreturn }
+attributes #9 = { nofree nosync nounwind readnone speculatable willreturn }
+attributes #10 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3}
 !llvm.ident = !{!4}
@@ -468,12 +490,7 @@ attributes #8 = { nounwind }
 !11 = distinct !{!11, !10}
 !12 = distinct !{!12, !10}
 !13 = distinct !{!13, !10}
-!14 = !{!15, !15, i64 0}
-!15 = !{!"any pointer", !7, i64 0}
-!16 = distinct !{!16, !10, !17}
-!17 = !{!"llvm.loop.isvectorized", i32 1}
-!18 = distinct !{!18, !19}
-!19 = !{!"llvm.loop.unroll.disable"}
-!20 = distinct !{!20, !10, !21, !17}
-!21 = !{!"llvm.loop.unroll.runtime.disable"}
-!22 = distinct !{!22, !10}
+!14 = distinct !{!14, !10, !15}
+!15 = !{!"llvm.loop.isvectorized", i32 1}
+!16 = distinct !{!16, !10}
+!17 = distinct !{!17, !10}

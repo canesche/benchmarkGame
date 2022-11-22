@@ -23,24 +23,24 @@ main(int argc, char *argv[]) {
     char *strend = strbuf;
     int stufflen = strlen(STUFF);
 
-	
-
     if (!strbuf) { perror("calloc strbuf"); exit(1); }
     for (i=0; i<n; i++) {
-	if (((strbuf+buflen)-strend) < (stufflen+1)) {
-	    buflen = 2*buflen;
-	    strbuf = realloc(strbuf, buflen);
-	    if (!strbuf) { perror("realloc strbuf"); exit(1); }
-	    strend = strbuf + strlen(strbuf);
-	}
-	/* much faster to strcat to strend than to strbuf */
-	strcat(strend, STUFF);
-	strend += stufflen;
+        if (((strbuf+buflen)-strend) < (stufflen+1)) {
+            buflen = 2*buflen;
+            strbuf = realloc(strbuf, buflen);
+            if (!strbuf) { perror("realloc strbuf"); exit(1); }
+            strend = strbuf + strlen(strbuf);
+        }
+        /* much faster to strcat to strend than to strbuf */
+        strcat(strend, STUFF);
+        strend += stufflen;
     }
     printf("%d\n", (int)strlen(strbuf));
-    free(strbuf);
     
+    time = ((double) (clock() - start)) / CLOCKS_PER_SEC;
     printf("Time: %lf\n", time);
+
+    free(strbuf);
     
 
     return(0);

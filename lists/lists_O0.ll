@@ -18,6 +18,7 @@ target triple = "x86_64-pc-linux-gnu"
 @.str.10 = private unnamed_addr constant [35 x i8] c"li1 size wrong, wanted %d, got %d\0A\00", align 1
 @.str.11 = private unnamed_addr constant [27 x i8] c"li1 and li2 are not equal\0A\00", align 1
 @.str.12 = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@.str.13 = private unnamed_addr constant [11 x i8] c"Time: %lf\0A\00", align 1
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local void @list_push_tail(%struct.DLL* noundef %0, %struct.DLL* noundef %1) #0 {
@@ -361,7 +362,7 @@ define internal i32 @list_length(%struct.DLL* noundef %0) #0 {
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local %struct.DLL* @list_new() #0 {
   %1 = alloca %struct.DLL*, align 8
-  %2 = call noalias i8* @malloc(i64 noundef 24) #5
+  %2 = call noalias i8* @malloc(i64 noundef 24) #4
   %3 = bitcast i8* %2 to %struct.DLL*
   store %struct.DLL* %3, %struct.DLL** %1, align 8
   %4 = load %struct.DLL*, %struct.DLL** %1, align 8
@@ -417,7 +418,7 @@ define dso_local %struct.DLL* @list_sequence(i32 noundef %0, i32 noundef %1) #0 
   %23 = add nsw i32 %22, 1
   %24 = sext i32 %23 to i64
   %25 = mul i64 %24, 24
-  %26 = call noalias i8* @malloc(i64 noundef %25) #5
+  %26 = call noalias i8* @malloc(i64 noundef %25) #4
   %27 = bitcast i8* %26 to %struct.DLL*
   store %struct.DLL* %27, %struct.DLL** %9, align 8
   %28 = load i32, i32* %3, align 4
@@ -536,7 +537,7 @@ define dso_local %struct.DLL* @list_copy(%struct.DLL* noundef %0) #0 {
   %11 = add nsw i32 %10, 1
   %12 = sext i32 %11 to i64
   %13 = mul i64 %12, 24
-  %14 = call noalias i8* @malloc(i64 noundef %13) #5
+  %14 = call noalias i8* @malloc(i64 noundef %13) #4
   %15 = bitcast i8* %14 to %struct.DLL*
   store %struct.DLL* %15, %struct.DLL** %7, align 8
   store i32 0, i32* %3, align 4
@@ -698,7 +699,7 @@ define dso_local i32 @test_lists() #0 {
 
 13:                                               ; preds = %0
   %14 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([27 x i8], [27 x i8]* @.str.4, i64 0, i64 0))
-  call void @exit(i32 noundef 1) #6
+  call void @exit(i32 noundef 1) #5
   unreachable
 
 15:                                               ; preds = %0
@@ -726,7 +727,7 @@ define dso_local i32 @test_lists() #0 {
 
 29:                                               ; preds = %25
   %30 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([25 x i8], [25 x i8]* @.str.5, i64 0, i64 0))
-  call void @exit(i32 noundef 1) #6
+  call void @exit(i32 noundef 1) #5
   unreachable
 
 31:                                               ; preds = %25
@@ -754,7 +755,7 @@ define dso_local i32 @test_lists() #0 {
 
 45:                                               ; preds = %41
   %46 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([25 x i8], [25 x i8]* @.str.6, i64 0, i64 0))
-  call void @exit(i32 noundef 1) #6
+  call void @exit(i32 noundef 1) #5
   unreachable
 
 47:                                               ; preds = %41
@@ -773,7 +774,7 @@ define dso_local i32 @test_lists() #0 {
   %57 = getelementptr inbounds %struct.DLL, %struct.DLL* %56, i32 0, i32 0
   %58 = load i32, i32* %57, align 8
   %59 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([42 x i8], [42 x i8]* @.str.7, i64 0, i64 0), i32 noundef 100, i32 noundef %58)
-  call void @exit(i32 noundef 1) #6
+  call void @exit(i32 noundef 1) #5
   unreachable
 
 60:                                               ; preds = %47
@@ -790,7 +791,7 @@ define dso_local i32 @test_lists() #0 {
   %69 = getelementptr inbounds %struct.DLL, %struct.DLL* %68, i32 0, i32 0
   %70 = load i32, i32* %69, align 8
   %71 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([37 x i8], [37 x i8]* @.str.8, i64 0, i64 0), i32 noundef 100, i32 noundef %70)
-  call void @exit(i32 noundef 1) #6
+  call void @exit(i32 noundef 1) #5
   unreachable
 
 72:                                               ; preds = %60
@@ -807,7 +808,7 @@ define dso_local i32 @test_lists() #0 {
   %81 = getelementptr inbounds %struct.DLL, %struct.DLL* %80, i32 0, i32 0
   %82 = load i32, i32* %81, align 8
   %83 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([42 x i8], [42 x i8]* @.str.9, i64 0, i64 0), i32 noundef 100, i32 noundef %82)
-  call void @exit(i32 noundef 1) #6
+  call void @exit(i32 noundef 1) #5
   unreachable
 
 84:                                               ; preds = %72
@@ -824,7 +825,7 @@ define dso_local i32 @test_lists() #0 {
   %93 = getelementptr inbounds %struct.DLL, %struct.DLL* %92, i32 0, i32 0
   %94 = load i32, i32* %93, align 8
   %95 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([37 x i8], [37 x i8]* @.str.8, i64 0, i64 0), i32 noundef 100, i32 noundef %94)
-  call void @exit(i32 noundef 1) #6
+  call void @exit(i32 noundef 1) #5
   unreachable
 
 96:                                               ; preds = %84
@@ -837,7 +838,7 @@ define dso_local i32 @test_lists() #0 {
   %101 = load %struct.DLL*, %struct.DLL** %2, align 8
   %102 = call i32 @list_length(%struct.DLL* noundef %101)
   %103 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([35 x i8], [35 x i8]* @.str.10, i64 0, i64 0), i32 noundef 100, i32 noundef %102)
-  call void @exit(i32 noundef 1) #6
+  call void @exit(i32 noundef 1) #5
   unreachable
 
 104:                                              ; preds = %96
@@ -849,7 +850,7 @@ define dso_local i32 @test_lists() #0 {
 
 109:                                              ; preds = %104
   %110 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([27 x i8], [27 x i8]* @.str.11, i64 0, i64 0))
-  call void @exit(i32 noundef 1) #6
+  call void @exit(i32 noundef 1) #5
   unreachable
 
 111:                                              ; preds = %104
@@ -858,13 +859,13 @@ define dso_local i32 @test_lists() #0 {
   store i32 %113, i32* %1, align 4
   %114 = load %struct.DLL*, %struct.DLL** %2, align 8
   %115 = bitcast %struct.DLL* %114 to i8*
-  call void @free(i8* noundef %115) #5
+  call void @free(i8* noundef %115) #4
   %116 = load %struct.DLL*, %struct.DLL** %3, align 8
   %117 = bitcast %struct.DLL* %116 to i8*
-  call void @free(i8* noundef %117) #5
+  call void @free(i8* noundef %117) #4
   %118 = load %struct.DLL*, %struct.DLL** %4, align 8
   %119 = bitcast %struct.DLL* %118 to i8*
-  call void @free(i8* noundef %119) #5
+  call void @free(i8* noundef %119) #4
   %120 = load i32, i32* %1, align 4
   ret i32 %120
 }
@@ -891,59 +892,53 @@ define dso_local i32 @main(i32 noundef %0, i8** noundef %1) #0 {
   %4 = alloca i32, align 4
   %5 = alloca i8**, align 8
   %6 = alloca i32, align 4
-  %7 = alloca i32, align 4
+  %7 = alloca i64, align 8
+  %8 = alloca double, align 8
+  %9 = alloca i32, align 4
   store i32 0, i32* %3, align 4
   store i32 %0, i32* %4, align 4
   store i8** %1, i8*** %5, align 8
-  %8 = load i32, i32* %4, align 4
-  %9 = icmp eq i32 %8, 2
-  br i1 %9, label %10, label %15
+  store i32 3000000, i32* %6, align 4
+  %10 = call i64 @clock() #4
+  store i64 %10, i64* %7, align 8
+  store i32 0, i32* %9, align 4
+  br label %11
 
-10:                                               ; preds = %2
-  %11 = load i8**, i8*** %5, align 8
-  %12 = getelementptr inbounds i8*, i8** %11, i64 1
-  %13 = load i8*, i8** %12, align 8
-  %14 = call i32 @atoi(i8* noundef %13) #7
-  br label %16
+11:                                               ; preds = %15, %2
+  %12 = load i32, i32* %6, align 4
+  %13 = add nsw i32 %12, -1
+  store i32 %13, i32* %6, align 4
+  %14 = icmp ne i32 %12, 0
+  br i1 %14, label %15, label %17
 
-15:                                               ; preds = %2
-  br label %16
+15:                                               ; preds = %11
+  %16 = call i32 @test_lists()
+  store i32 %16, i32* %9, align 4
+  br label %11, !llvm.loop !14
 
-16:                                               ; preds = %15, %10
-  %17 = phi i32 [ %14, %10 ], [ 3000000, %15 ]
-  store i32 %17, i32* %6, align 4
-  store i32 0, i32* %7, align 4
-  br label %18
-
-18:                                               ; preds = %22, %16
-  %19 = load i32, i32* %6, align 4
-  %20 = add nsw i32 %19, -1
-  store i32 %20, i32* %6, align 4
-  %21 = icmp ne i32 %19, 0
-  br i1 %21, label %22, label %24
-
-22:                                               ; preds = %18
-  %23 = call i32 @test_lists()
-  store i32 %23, i32* %7, align 4
-  br label %18, !llvm.loop !14
-
-24:                                               ; preds = %18
-  %25 = load i32, i32* %7, align 4
-  %26 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([4 x i8], [4 x i8]* @.str.12, i64 0, i64 0), i32 noundef %25)
+17:                                               ; preds = %11
+  %18 = load i32, i32* %9, align 4
+  %19 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([4 x i8], [4 x i8]* @.str.12, i64 0, i64 0), i32 noundef %18)
+  %20 = call i64 @clock() #4
+  %21 = load i64, i64* %7, align 8
+  %22 = sub nsw i64 %20, %21
+  %23 = sitofp i64 %22 to double
+  %24 = fdiv double %23, 1.000000e+06
+  store double %24, double* %8, align 8
+  %25 = load double, double* %8, align 8
+  %26 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([11 x i8], [11 x i8]* @.str.13, i64 0, i64 0), double noundef %25)
   ret i32 0
 }
 
-; Function Attrs: nounwind readonly willreturn
-declare i32 @atoi(i8* noundef) #4
+; Function Attrs: nounwind
+declare i64 @clock() #2
 
 attributes #0 = { noinline nounwind optnone uwtable "frame-pointer"="all" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #1 = { "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #2 = { nounwind "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #3 = { noreturn nounwind "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #4 = { nounwind readonly willreturn "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #5 = { nounwind }
-attributes #6 = { noreturn nounwind }
-attributes #7 = { nounwind readonly willreturn }
+attributes #4 = { nounwind }
+attributes #5 = { noreturn nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3, !4}
 !llvm.ident = !{!5}

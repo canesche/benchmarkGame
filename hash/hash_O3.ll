@@ -12,6 +12,7 @@ target triple = "x86_64-pc-linux-gnu"
 @.str.2 = private unnamed_addr constant [3 x i8] c"%x\00", align 1
 @.str.3 = private unnamed_addr constant [3 x i8] c"%d\00", align 1
 @.str.4 = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@.str.5 = private unnamed_addr constant [11 x i8] c"Time: %lf\0A\00", align 1
 
 ; Function Attrs: nounwind uwtable
 define dso_local noalias %struct.ht_node* @ht_node_create(i8* nocapture noundef readonly %0) local_unnamed_addr #0 {
@@ -157,252 +158,217 @@ define dso_local void @ht_destroy(%struct.ht_ht* nocapture noundef %0) local_unn
 declare void @free(i8* nocapture noundef) local_unnamed_addr #7
 
 ; Function Attrs: nounwind uwtable
-define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readonly %1) local_unnamed_addr #0 {
+define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readnone %1) local_unnamed_addr #0 {
   %3 = alloca [32 x i8], align 16
-  %4 = icmp eq i32 %0, 2
-  br i1 %4, label %5, label %10
+  %4 = getelementptr inbounds [32 x i8], [32 x i8]* %3, i64 0, i64 0
+  call void @llvm.lifetime.start.p0i8(i64 32, i8* nonnull %4) #10
+  %5 = tail call i64 @clock() #10
+  %6 = tail call noalias dereferenceable_or_null(50331752) i8* @calloc(i64 noundef 6291469, i64 noundef 8) #10
+  %7 = bitcast i8* %6 to %struct.ht_node**
+  br label %8
 
-5:                                                ; preds = %2
-  %6 = getelementptr inbounds i8*, i8** %1, i64 1
-  %7 = load i8*, i8** %6, align 8, !tbaa !23
-  %8 = tail call i64 @strtol(i8* nocapture noundef nonnull %7, i8** noundef null, i32 noundef 10) #10
-  %9 = trunc i64 %8 to i32
-  br label %10
+8:                                                ; preds = %2, %67
+  %9 = phi i32 [ 1, %2 ], [ %70, %67 ]
+  %10 = call i32 (i8*, i8*, ...) @sprintf(i8* noundef nonnull %4, i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([3 x i8], [3 x i8]* @.str.2, i64 0, i64 0), i32 noundef %9) #10
+  %11 = load i8, i8* %4, align 16, !tbaa !26
+  %12 = icmp eq i8 %11, 0
+  br i1 %12, label %23, label %13
 
-10:                                               ; preds = %2, %5
-  %11 = phi i32 [ %9, %5 ], [ 3500000, %2 ]
-  %12 = getelementptr inbounds [32 x i8], [32 x i8]* %3, i64 0, i64 0
-  call void @llvm.lifetime.start.p0i8(i64 32, i8* nonnull %12) #10
-  %13 = sext i32 %11 to i64
-  br label %14
+13:                                               ; preds = %8, %13
+  %14 = phi i8 [ %21, %13 ], [ %11, %8 ]
+  %15 = phi i64 [ %19, %13 ], [ 0, %8 ]
+  %16 = phi i8* [ %20, %13 ], [ %4, %8 ]
+  %17 = mul i64 %15, 5
+  %18 = sext i8 %14 to i64
+  %19 = add i64 %17, %18
+  %20 = getelementptr inbounds i8, i8* %16, i64 1
+  %21 = load i8, i8* %20, align 1, !tbaa !26
+  %22 = icmp eq i8 %21, 0
+  br i1 %22, label %23, label %13, !llvm.loop !27
 
-14:                                               ; preds = %14, %10
-  %15 = phi i64 [ %19, %14 ], [ 0, %10 ]
-  %16 = getelementptr inbounds [28 x i64], [28 x i64]* @ht_prime_list, i64 0, i64 %15
-  %17 = load i64, i64* %16, align 8, !tbaa !13
-  %18 = icmp ult i64 %17, %13
-  %19 = add nuw i64 %15, 1
-  br i1 %18, label %14, label %20, !llvm.loop !15
+23:                                               ; preds = %13, %8
+  %24 = phi i64 [ 0, %8 ], [ %19, %13 ]
+  %25 = urem i64 %24, 6291469
+  %26 = getelementptr inbounds %struct.ht_node*, %struct.ht_node** %7, i64 %25
+  %27 = load %struct.ht_node*, %struct.ht_node** %26, align 8, !tbaa !23
+  %28 = icmp eq %struct.ht_node* %27, null
+  br i1 %28, label %48, label %29
 
-20:                                               ; preds = %14
-  %21 = trunc i64 %17 to i32
-  %22 = shl i64 %17, 32
-  %23 = ashr exact i64 %22, 32
-  %24 = tail call noalias i8* @calloc(i64 noundef %23, i64 noundef 8) #10
-  %25 = icmp slt i32 %11, 1
-  %26 = bitcast i8* %24 to %struct.ht_node**
-  br i1 %25, label %136, label %29
+29:                                               ; preds = %23, %35
+  %30 = phi %struct.ht_node* [ %37, %35 ], [ %27, %23 ]
+  %31 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %30, i64 0, i32 0
+  %32 = load i8*, i8** %31, align 8, !tbaa !5
+  %33 = call i32 @strcmp(i8* noundef nonnull dereferenceable(1) %4, i8* noundef nonnull dereferenceable(1) %32) #13
+  %34 = icmp eq i32 %33, 0
+  br i1 %34, label %67, label %35
 
-27:                                               ; preds = %90
-  %28 = icmp sgt i32 %11, 0
-  br i1 %28, label %95, label %136
+35:                                               ; preds = %29
+  %36 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %30, i64 0, i32 2
+  %37 = load %struct.ht_node*, %struct.ht_node** %36, align 8, !tbaa !23
+  %38 = icmp eq %struct.ht_node* %37, null
+  br i1 %38, label %39, label %29, !llvm.loop !28
 
-29:                                               ; preds = %20, %90
-  %30 = phi i32 [ %93, %90 ], [ 1, %20 ]
-  %31 = call i32 (i8*, i8*, ...) @sprintf(i8* noundef nonnull %12, i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([3 x i8], [3 x i8]* @.str.2, i64 0, i64 0), i32 noundef %30) #10
-  %32 = load i8, i8* %12, align 16, !tbaa !26
-  %33 = icmp eq i8 %32, 0
-  br i1 %33, label %44, label %34
+39:                                               ; preds = %35
+  %40 = tail call noalias dereferenceable_or_null(24) i8* @malloc(i64 noundef 24) #10
+  %41 = icmp eq i8* %40, null
+  br i1 %41, label %42, label %43
 
-34:                                               ; preds = %29, %34
-  %35 = phi i8 [ %42, %34 ], [ %32, %29 ]
-  %36 = phi i64 [ %40, %34 ], [ 0, %29 ]
-  %37 = phi i8* [ %41, %34 ], [ %12, %29 ]
-  %38 = mul i64 %36, 5
-  %39 = sext i8 %35 to i64
-  %40 = add i64 %38, %39
-  %41 = getelementptr inbounds i8, i8* %37, i64 1
-  %42 = load i8, i8* %41, align 1, !tbaa !26
-  %43 = icmp eq i8 %42, 0
-  br i1 %43, label %44, label %34, !llvm.loop !27
-
-44:                                               ; preds = %34, %29
-  %45 = phi i64 [ 0, %29 ], [ %40, %34 ]
-  %46 = urem i64 %45, %23
-  %47 = shl i64 %46, 32
-  %48 = ashr exact i64 %47, 32
-  %49 = getelementptr inbounds %struct.ht_node*, %struct.ht_node** %26, i64 %48
-  %50 = load %struct.ht_node*, %struct.ht_node** %49, align 8, !tbaa !23
-  %51 = icmp eq %struct.ht_node* %50, null
-  br i1 %51, label %71, label %52
-
-52:                                               ; preds = %44, %58
-  %53 = phi %struct.ht_node* [ %60, %58 ], [ %50, %44 ]
-  %54 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %53, i64 0, i32 0
-  %55 = load i8*, i8** %54, align 8, !tbaa !5
-  %56 = call i32 @strcmp(i8* noundef nonnull dereferenceable(1) %12, i8* noundef nonnull dereferenceable(1) %55) #13
-  %57 = icmp eq i32 %56, 0
-  br i1 %57, label %90, label %58
-
-58:                                               ; preds = %52
-  %59 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %53, i64 0, i32 2
-  %60 = load %struct.ht_node*, %struct.ht_node** %59, align 8, !tbaa !23
-  %61 = icmp eq %struct.ht_node* %60, null
-  br i1 %61, label %62, label %52, !llvm.loop !28
-
-62:                                               ; preds = %58
-  %63 = tail call noalias dereferenceable_or_null(24) i8* @malloc(i64 noundef 24) #10
-  %64 = icmp eq i8* %63, null
-  br i1 %64, label %65, label %66
-
-65:                                               ; preds = %62
+42:                                               ; preds = %39
   tail call void @perror(i8* noundef getelementptr inbounds ([15 x i8], [15 x i8]* @.str, i64 0, i64 0)) #14
   tail call void @exit(i32 noundef 1) #12
   unreachable
 
-66:                                               ; preds = %62
-  %67 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %53, i64 0, i32 2
-  %68 = call noalias i8* @strdup(i8* noundef nonnull %12) #10
-  %69 = icmp eq i8* %68, null
-  br i1 %69, label %70, label %79
+43:                                               ; preds = %39
+  %44 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %30, i64 0, i32 2
+  %45 = call noalias i8* @strdup(i8* noundef nonnull %4) #10
+  %46 = icmp eq i8* %45, null
+  br i1 %46, label %47, label %56
 
-70:                                               ; preds = %66
+47:                                               ; preds = %43
   tail call void @perror(i8* noundef getelementptr inbounds ([14 x i8], [14 x i8]* @.str.1, i64 0, i64 0)) #14
   tail call void @exit(i32 noundef 1) #12
   unreachable
 
-71:                                               ; preds = %44
-  %72 = tail call noalias dereferenceable_or_null(24) i8* @malloc(i64 noundef 24) #10
-  %73 = icmp eq i8* %72, null
-  br i1 %73, label %74, label %75
+48:                                               ; preds = %23
+  %49 = tail call noalias dereferenceable_or_null(24) i8* @malloc(i64 noundef 24) #10
+  %50 = icmp eq i8* %49, null
+  br i1 %50, label %51, label %52
 
-74:                                               ; preds = %71
+51:                                               ; preds = %48
   tail call void @perror(i8* noundef getelementptr inbounds ([15 x i8], [15 x i8]* @.str, i64 0, i64 0)) #14
   tail call void @exit(i32 noundef 1) #12
   unreachable
 
-75:                                               ; preds = %71
-  %76 = call noalias i8* @strdup(i8* noundef nonnull %12) #10
-  %77 = icmp eq i8* %76, null
-  br i1 %77, label %78, label %79
+52:                                               ; preds = %48
+  %53 = call noalias i8* @strdup(i8* noundef nonnull %4) #10
+  %54 = icmp eq i8* %53, null
+  br i1 %54, label %55, label %56
 
-78:                                               ; preds = %75
+55:                                               ; preds = %52
   tail call void @perror(i8* noundef getelementptr inbounds ([14 x i8], [14 x i8]* @.str.1, i64 0, i64 0)) #14
   tail call void @exit(i32 noundef 1) #12
   unreachable
 
-79:                                               ; preds = %75, %66
-  %80 = phi i8* [ %68, %66 ], [ %76, %75 ]
-  %81 = phi %struct.ht_node** [ %67, %66 ], [ %49, %75 ]
-  %82 = phi i8* [ %63, %66 ], [ %72, %75 ]
-  %83 = bitcast i8* %82 to %struct.ht_node*
-  %84 = bitcast i8* %82 to i8**
-  store i8* %80, i8** %84, align 8, !tbaa !5
-  %85 = getelementptr inbounds i8, i8* %82, i64 8
-  %86 = bitcast i8* %85 to i32*
-  store i32 0, i32* %86, align 8, !tbaa !11
-  %87 = getelementptr inbounds i8, i8* %82, i64 16
-  %88 = bitcast i8* %87 to %struct.ht_node**
-  store %struct.ht_node* null, %struct.ht_node** %88, align 8, !tbaa !12
-  %89 = bitcast %struct.ht_node** %81 to i8**
-  store i8* %82, i8** %89, align 8, !tbaa !23
-  br label %90
+56:                                               ; preds = %52, %43
+  %57 = phi i8* [ %45, %43 ], [ %53, %52 ]
+  %58 = phi %struct.ht_node** [ %44, %43 ], [ %26, %52 ]
+  %59 = phi i8* [ %40, %43 ], [ %49, %52 ]
+  %60 = bitcast i8* %59 to %struct.ht_node*
+  %61 = bitcast i8* %59 to i8**
+  store i8* %57, i8** %61, align 8, !tbaa !5
+  %62 = getelementptr inbounds i8, i8* %59, i64 8
+  %63 = bitcast i8* %62 to i32*
+  store i32 0, i32* %63, align 8, !tbaa !11
+  %64 = getelementptr inbounds i8, i8* %59, i64 16
+  %65 = bitcast i8* %64 to %struct.ht_node**
+  store %struct.ht_node* null, %struct.ht_node** %65, align 8, !tbaa !12
+  %66 = bitcast %struct.ht_node** %58 to i8**
+  store i8* %59, i8** %66, align 8, !tbaa !23
+  br label %67
 
-90:                                               ; preds = %52, %79
-  %91 = phi %struct.ht_node* [ %83, %79 ], [ %53, %52 ]
-  %92 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %91, i64 0, i32 1
-  store i32 %30, i32* %92, align 8, !tbaa !11
-  %93 = add nuw i32 %30, 1
-  %94 = icmp eq i32 %30, %11
-  br i1 %94, label %27, label %29, !llvm.loop !29
+67:                                               ; preds = %29, %56
+  %68 = phi %struct.ht_node* [ %60, %56 ], [ %30, %29 ]
+  %69 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %68, i64 0, i32 1
+  store i32 %9, i32* %69, align 8, !tbaa !11
+  %70 = add nuw nsw i32 %9, 1
+  %71 = icmp eq i32 %70, 3500001
+  br i1 %71, label %72, label %8, !llvm.loop !29
 
-95:                                               ; preds = %27, %129
-  %96 = phi i32 [ %134, %129 ], [ %11, %27 ]
-  %97 = phi i32 [ %133, %129 ], [ 0, %27 ]
-  %98 = call i32 (i8*, i8*, ...) @sprintf(i8* noundef nonnull %12, i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([3 x i8], [3 x i8]* @.str.3, i64 0, i64 0), i32 noundef %96) #10
-  %99 = load i8, i8* %12, align 16, !tbaa !26
-  %100 = icmp eq i8 %99, 0
-  br i1 %100, label %111, label %101
+72:                                               ; preds = %67, %104
+  %73 = phi i32 [ %109, %104 ], [ 3500000, %67 ]
+  %74 = phi i32 [ %108, %104 ], [ 0, %67 ]
+  %75 = call i32 (i8*, i8*, ...) @sprintf(i8* noundef nonnull %4, i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([3 x i8], [3 x i8]* @.str.3, i64 0, i64 0), i32 noundef %73) #10
+  %76 = load i8, i8* %4, align 16, !tbaa !26
+  %77 = icmp eq i8 %76, 0
+  br i1 %77, label %88, label %78
 
-101:                                              ; preds = %95, %101
-  %102 = phi i8 [ %109, %101 ], [ %99, %95 ]
-  %103 = phi i64 [ %107, %101 ], [ 0, %95 ]
-  %104 = phi i8* [ %108, %101 ], [ %12, %95 ]
-  %105 = mul i64 %103, 5
-  %106 = sext i8 %102 to i64
-  %107 = add i64 %105, %106
-  %108 = getelementptr inbounds i8, i8* %104, i64 1
-  %109 = load i8, i8* %108, align 1, !tbaa !26
-  %110 = icmp eq i8 %109, 0
-  br i1 %110, label %111, label %101, !llvm.loop !27
+78:                                               ; preds = %72, %78
+  %79 = phi i8 [ %86, %78 ], [ %76, %72 ]
+  %80 = phi i64 [ %84, %78 ], [ 0, %72 ]
+  %81 = phi i8* [ %85, %78 ], [ %4, %72 ]
+  %82 = mul i64 %80, 5
+  %83 = sext i8 %79 to i64
+  %84 = add i64 %82, %83
+  %85 = getelementptr inbounds i8, i8* %81, i64 1
+  %86 = load i8, i8* %85, align 1, !tbaa !26
+  %87 = icmp eq i8 %86, 0
+  br i1 %87, label %88, label %78, !llvm.loop !27
 
-111:                                              ; preds = %101, %95
-  %112 = phi i64 [ 0, %95 ], [ %107, %101 ]
-  %113 = urem i64 %112, %23
-  %114 = shl i64 %113, 32
-  %115 = ashr exact i64 %114, 32
-  %116 = getelementptr inbounds %struct.ht_node*, %struct.ht_node** %26, i64 %115
-  %117 = load %struct.ht_node*, %struct.ht_node** %116, align 8, !tbaa !23
-  %118 = icmp eq %struct.ht_node* %117, null
-  br i1 %118, label %129, label %119
+88:                                               ; preds = %78, %72
+  %89 = phi i64 [ 0, %72 ], [ %84, %78 ]
+  %90 = urem i64 %89, 6291469
+  %91 = getelementptr inbounds %struct.ht_node*, %struct.ht_node** %7, i64 %90
+  %92 = load %struct.ht_node*, %struct.ht_node** %91, align 8, !tbaa !23
+  %93 = icmp eq %struct.ht_node* %92, null
+  br i1 %93, label %104, label %94
 
-119:                                              ; preds = %111, %125
-  %120 = phi %struct.ht_node* [ %127, %125 ], [ %117, %111 ]
-  %121 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %120, i64 0, i32 0
-  %122 = load i8*, i8** %121, align 8, !tbaa !5
-  %123 = call i32 @strcmp(i8* noundef nonnull dereferenceable(1) %12, i8* noundef nonnull dereferenceable(1) %122) #13
-  %124 = icmp eq i32 %123, 0
-  br i1 %124, label %129, label %125
+94:                                               ; preds = %88, %100
+  %95 = phi %struct.ht_node* [ %102, %100 ], [ %92, %88 ]
+  %96 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %95, i64 0, i32 0
+  %97 = load i8*, i8** %96, align 8, !tbaa !5
+  %98 = call i32 @strcmp(i8* noundef nonnull dereferenceable(1) %4, i8* noundef nonnull dereferenceable(1) %97) #13
+  %99 = icmp eq i32 %98, 0
+  br i1 %99, label %104, label %100
 
-125:                                              ; preds = %119
-  %126 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %120, i64 0, i32 2
-  %127 = load %struct.ht_node*, %struct.ht_node** %126, align 8, !tbaa !23
-  %128 = icmp eq %struct.ht_node* %127, null
-  br i1 %128, label %129, label %119, !llvm.loop !30
+100:                                              ; preds = %94
+  %101 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %95, i64 0, i32 2
+  %102 = load %struct.ht_node*, %struct.ht_node** %101, align 8, !tbaa !23
+  %103 = icmp eq %struct.ht_node* %102, null
+  br i1 %103, label %104, label %94, !llvm.loop !30
 
-129:                                              ; preds = %119, %125, %111
-  %130 = phi %struct.ht_node* [ null, %111 ], [ %120, %119 ], [ null, %125 ]
-  %131 = icmp ne %struct.ht_node* %130, null
-  %132 = zext i1 %131 to i32
-  %133 = add nuw nsw i32 %97, %132
-  %134 = add nsw i32 %96, -1
-  %135 = icmp sgt i32 %96, 1
-  br i1 %135, label %95, label %136, !llvm.loop !31
+104:                                              ; preds = %94, %100, %88
+  %105 = phi %struct.ht_node* [ null, %88 ], [ %95, %94 ], [ null, %100 ]
+  %106 = icmp ne %struct.ht_node* %105, null
+  %107 = zext i1 %106 to i32
+  %108 = add nuw nsw i32 %74, %107
+  %109 = add nsw i32 %73, -1
+  %110 = icmp ugt i32 %73, 1
+  br i1 %110, label %72, label %111, !llvm.loop !31
 
-136:                                              ; preds = %129, %20, %27
-  %137 = phi i32 [ 0, %27 ], [ 0, %20 ], [ %133, %129 ]
-  %138 = icmp sgt i32 %21, 0
-  br i1 %138, label %139, label %155
+111:                                              ; preds = %104, %124
+  %112 = phi i64 [ %125, %124 ], [ 0, %104 ]
+  %113 = getelementptr inbounds %struct.ht_node*, %struct.ht_node** %7, i64 %112
+  %114 = load %struct.ht_node*, %struct.ht_node** %113, align 8, !tbaa !23
+  %115 = icmp eq %struct.ht_node* %114, null
+  br i1 %115, label %124, label %116
 
-139:                                              ; preds = %136, %152
-  %140 = phi i64 [ %153, %152 ], [ 0, %136 ]
-  %141 = getelementptr inbounds %struct.ht_node*, %struct.ht_node** %26, i64 %140
-  %142 = load %struct.ht_node*, %struct.ht_node** %141, align 8, !tbaa !23
-  %143 = icmp eq %struct.ht_node* %142, null
-  br i1 %143, label %152, label %144
+116:                                              ; preds = %111, %116
+  %117 = phi %struct.ht_node* [ %119, %116 ], [ %114, %111 ]
+  %118 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %117, i64 0, i32 2
+  %119 = load %struct.ht_node*, %struct.ht_node** %118, align 8, !tbaa !12
+  %120 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %117, i64 0, i32 0
+  %121 = load i8*, i8** %120, align 8, !tbaa !5
+  tail call void @free(i8* noundef %121) #10
+  %122 = bitcast %struct.ht_node* %117 to i8*
+  tail call void @free(i8* noundef %122) #10
+  %123 = icmp eq %struct.ht_node* %119, null
+  br i1 %123, label %124, label %116, !llvm.loop !24
 
-144:                                              ; preds = %139, %144
-  %145 = phi %struct.ht_node* [ %147, %144 ], [ %142, %139 ]
-  %146 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %145, i64 0, i32 2
-  %147 = load %struct.ht_node*, %struct.ht_node** %146, align 8, !tbaa !12
-  %148 = getelementptr inbounds %struct.ht_node, %struct.ht_node* %145, i64 0, i32 0
-  %149 = load i8*, i8** %148, align 8, !tbaa !5
-  tail call void @free(i8* noundef %149) #10
-  %150 = bitcast %struct.ht_node* %145 to i8*
-  tail call void @free(i8* noundef %150) #10
-  %151 = icmp eq %struct.ht_node* %147, null
-  br i1 %151, label %152, label %144, !llvm.loop !24
+124:                                              ; preds = %116, %111
+  %125 = add nuw nsw i64 %112, 1
+  %126 = icmp eq i64 %125, 6291469
+  br i1 %126, label %127, label %111, !llvm.loop !25
 
-152:                                              ; preds = %144, %139
-  %153 = add nuw nsw i64 %140, 1
-  %154 = icmp eq i64 %153, %23
-  br i1 %154, label %155, label %139, !llvm.loop !25
-
-155:                                              ; preds = %152, %136
-  tail call void @free(i8* noundef %24) #10
-  %156 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([4 x i8], [4 x i8]* @.str.4, i64 0, i64 0), i32 noundef %137)
-  call void @llvm.lifetime.end.p0i8(i64 32, i8* nonnull %12) #10
+127:                                              ; preds = %124
+  tail call void @free(i8* noundef %6) #10
+  %128 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([4 x i8], [4 x i8]* @.str.4, i64 0, i64 0), i32 noundef %108)
+  %129 = tail call i64 @clock() #10
+  %130 = sub nsw i64 %129, %5
+  %131 = sitofp i64 %130 to double
+  %132 = fdiv double %131, 1.000000e+06
+  %133 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([11 x i8], [11 x i8]* @.str.5, i64 0, i64 0), double noundef %132)
+  call void @llvm.lifetime.end.p0i8(i64 32, i8* nonnull %4) #10
   ret i32 0
 }
+
+; Function Attrs: nounwind
+declare i64 @clock() local_unnamed_addr #8
 
 ; Function Attrs: nofree nounwind
 declare noundef i32 @sprintf(i8* noalias nocapture noundef writeonly, i8* nocapture noundef readonly, ...) local_unnamed_addr #3
 
 ; Function Attrs: nofree nounwind
 declare noundef i32 @printf(i8* nocapture noundef readonly, ...) local_unnamed_addr #3
-
-; Function Attrs: mustprogress nofree nounwind willreturn
-declare i64 @strtol(i8* noundef readonly, i8** nocapture noundef, i32 noundef) local_unnamed_addr #8
 
 ; Function Attrs: argmemonly mustprogress nofree nounwind readonly willreturn
 declare i32 @strcmp(i8* nocapture noundef, i8* nocapture noundef) local_unnamed_addr #9
@@ -415,7 +381,7 @@ attributes #4 = { noreturn nounwind "frame-pointer"="none" "no-trapping-math"="t
 attributes #5 = { inaccessiblemem_or_argmemonly mustprogress nofree nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #6 = { nofree nounwind uwtable "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #7 = { inaccessiblemem_or_argmemonly mustprogress nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #8 = { mustprogress nofree nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #8 = { nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #9 = { argmemonly mustprogress nofree nounwind readonly willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #10 = { nounwind }
 attributes #11 = { cold }

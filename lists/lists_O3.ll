@@ -12,9 +12,10 @@ target triple = "x86_64-pc-linux-gnu"
 @.str.8 = private unnamed_addr constant [37 x i8] c"last value wrong, wanted %d, got %d\0A\00", align 1
 @.str.9 = private unnamed_addr constant [42 x i8] c"li2 first value wrong, wanted %d, got %d\0A\00", align 1
 @.str.12 = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
+@.str.13 = private unnamed_addr constant [11 x i8] c"Time: %lf\0A\00", align 1
 @str = private unnamed_addr constant [33 x i8] c"[last entry points to list head]\00", align 1
-@str.13 = private unnamed_addr constant [26 x i8] c"li2 and li1 are not equal\00", align 1
-@str.16 = private unnamed_addr constant [26 x i8] c"li1 and li2 are not equal\00", align 1
+@str.14 = private unnamed_addr constant [26 x i8] c"li2 and li1 are not equal\00", align 1
+@str.17 = private unnamed_addr constant [26 x i8] c"li1 and li2 are not equal\00", align 1
 
 ; Function Attrs: mustprogress nofree norecurse nosync nounwind uwtable willreturn
 define dso_local void @list_push_tail(%struct.DLL* noundef %0, %struct.DLL* noundef %1) local_unnamed_addr #0 {
@@ -564,7 +565,7 @@ define dso_local i32 @test_lists() local_unnamed_addr #7 {
   br label %101
 
 98:                                               ; preds = %83, %84, %85
-  %99 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([26 x i8], [26 x i8]* @str.13, i64 0, i64 0))
+  %99 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([26 x i8], [26 x i8]* @str.14, i64 0, i64 0))
   tail call void @exit(i32 noundef 1) #12
   unreachable
 
@@ -757,7 +758,7 @@ define dso_local i32 @test_lists() local_unnamed_addr #7 {
   br i1 %213, label %216, label %214
 
 214:                                              ; preds = %203, %189, %205, %210
-  %215 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([26 x i8], [26 x i8]* @str.16, i64 0, i64 0))
+  %215 = tail call i32 @puts(i8* nonnull dereferenceable(1) getelementptr inbounds ([26 x i8], [26 x i8]* @str.17, i64 0, i64 0))
   tail call void @exit(i32 noundef 1) #12
   unreachable
 
@@ -775,37 +776,29 @@ declare void @exit(i32 noundef) local_unnamed_addr #8
 declare void @free(i8* nocapture noundef) local_unnamed_addr #9
 
 ; Function Attrs: nounwind uwtable
-define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readonly %1) local_unnamed_addr #7 {
-  %3 = icmp eq i32 %0, 2
-  br i1 %3, label %4, label %10
+define dso_local i32 @main(i32 noundef %0, i8** nocapture noundef readnone %1) local_unnamed_addr #7 {
+  %3 = tail call i64 @clock() #11
+  br label %4
 
-4:                                                ; preds = %2
-  %5 = getelementptr inbounds i8*, i8** %1, i64 1
-  %6 = load i8*, i8** %5, align 8, !tbaa !21
-  %7 = tail call i64 @strtol(i8* nocapture noundef nonnull %6, i8** noundef null, i32 noundef 10) #11
-  %8 = trunc i64 %7 to i32
-  %9 = icmp eq i32 %8, 0
-  br i1 %9, label %17, label %10
+4:                                                ; preds = %2, %4
+  %5 = phi i32 [ 3000000, %2 ], [ %6, %4 ]
+  %6 = add nsw i32 %5, -1
+  %7 = tail call i32 @test_lists()
+  %8 = icmp eq i32 %6, 0
+  br i1 %8, label %9, label %4, !llvm.loop !21
 
-10:                                               ; preds = %2, %4
-  %11 = phi i32 [ 3000000, %2 ], [ %8, %4 ]
-  br label %12
-
-12:                                               ; preds = %10, %12
-  %13 = phi i32 [ %14, %12 ], [ %11, %10 ]
-  %14 = add nsw i32 %13, -1
-  %15 = tail call i32 @test_lists()
-  %16 = icmp eq i32 %14, 0
-  br i1 %16, label %17, label %12, !llvm.loop !22
-
-17:                                               ; preds = %12, %4
-  %18 = phi i32 [ 0, %4 ], [ %15, %12 ]
-  %19 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([4 x i8], [4 x i8]* @.str.12, i64 0, i64 0), i32 noundef %18)
+9:                                                ; preds = %4
+  %10 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([4 x i8], [4 x i8]* @.str.12, i64 0, i64 0), i32 noundef %7)
+  %11 = tail call i64 @clock() #11
+  %12 = sub nsw i64 %11, %3
+  %13 = sitofp i64 %12 to double
+  %14 = fdiv double %13, 1.000000e+06
+  %15 = tail call i32 (i8*, ...) @printf(i8* noundef nonnull dereferenceable(1) getelementptr inbounds ([11 x i8], [11 x i8]* @.str.13, i64 0, i64 0), double noundef %14)
   ret i32 0
 }
 
-; Function Attrs: mustprogress nofree nounwind willreturn
-declare i64 @strtol(i8* noundef readonly, i8** nocapture noundef, i32 noundef) local_unnamed_addr #10
+; Function Attrs: nounwind
+declare i64 @clock() local_unnamed_addr #10
 
 attributes #0 = { mustprogress nofree norecurse nosync nounwind uwtable willreturn "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #1 = { nofree norecurse nosync nounwind readonly uwtable "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
@@ -817,7 +810,7 @@ attributes #6 = { nofree norecurse nosync nounwind uwtable "frame-pointer"="none
 attributes #7 = { nounwind uwtable "frame-pointer"="none" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #8 = { noreturn nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #9 = { inaccessiblemem_or_argmemonly mustprogress nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #10 = { mustprogress nofree nounwind willreturn "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #10 = { nounwind "frame-pointer"="none" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #11 = { nounwind }
 attributes #12 = { noreturn nounwind }
 
@@ -845,5 +838,4 @@ attributes #12 = { noreturn nounwind }
 !18 = distinct !{!18, !14}
 !19 = distinct !{!19, !14}
 !20 = distinct !{!20, !14}
-!21 = !{!10, !10, i64 0}
-!22 = distinct !{!22, !14}
+!21 = distinct !{!21, !14}

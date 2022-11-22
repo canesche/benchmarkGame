@@ -6,16 +6,17 @@ target triple = "x86_64-pc-linux-gnu"
 @header1 = dso_local constant [23 x i8] c">ONE Homo sapiens alu\0A\00", align 16
 @header2 = dso_local constant [26 x i8] c">TWO IUB ambiguity codes\0A\00", align 16
 @header3 = dso_local constant [31 x i8] c">THREE Homo sapiens frequency\0A\00", align 16
-@alu = internal global i8* getelementptr inbounds ([288 x i8], [288 x i8]* @.str.1, i32 0, i32 0), align 8
-@iub = internal global i8* getelementptr inbounds ([16 x i8], [16 x i8]* @.str.2, i32 0, i32 0), align 8
+@alu = internal global i8* getelementptr inbounds ([288 x i8], [288 x i8]* @.str.2, i32 0, i32 0), align 8
+@iub = internal global i8* getelementptr inbounds ([16 x i8], [16 x i8]* @.str.3, i32 0, i32 0), align 8
 @iub_p = internal constant [15 x float] [float 0x3FD147AE20000000, float 0x3FBEB851E0000000, float 0x3FBEB851E0000000, float 0x3FD147AE20000000, float 0x3F947AE140000000, float 0x3F947AE140000000, float 0x3F947AE140000000, float 0x3F947AE140000000, float 0x3F947AE140000000, float 0x3F947AE140000000, float 0x3F947AE140000000, float 0x3F947AE140000000, float 0x3F947AE140000000, float 0x3F947AE140000000, float 0x3F947AE140000000], align 16
-@homosapiens = internal global i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str.3, i32 0, i32 0), align 8
+@homosapiens = internal global i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str.4, i32 0, i32 0), align 8
 @homosapiens_p = internal constant [4 x float] [float 0x3FD3639D20000000, float 0x3FC957AE40000000, float 0x3FC9493AE0000000, float 0x3FD34BEE40000000], align 16
-@.str = private unnamed_addr constant [2 x i8] c"\0A\00", align 1
-@.str.1 = private unnamed_addr constant [288 x i8] c"GGCCGGGCGCGGTGGCTCACGCCTGTAATCCCAGCACTTTGGGAGGCCGAGGCGGGCGGATCACCTGAGGTCAGGAGTTCGAGACCAGCCTGGCCAACATGGTGAAACCCCGTCTCTACTAAAAATACAAAAATTAGCCGGGCGTGGTGGCGCGCGCCTGTAATCCCAGCTACTCGGGAGGCTGAGGCAGGAGAATCGCTTGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTCTCAAAAA\00", align 1
+@.str = private unnamed_addr constant [11 x i8] c"Time: %lf\0A\00", align 1
+@.str.1 = private unnamed_addr constant [2 x i8] c"\0A\00", align 1
+@.str.2 = private unnamed_addr constant [288 x i8] c"GGCCGGGCGCGGTGGCTCACGCCTGTAATCCCAGCACTTTGGGAGGCCGAGGCGGGCGGATCACCTGAGGTCAGGAGTTCGAGACCAGCCTGGCCAACATGGTGAAACCCCGTCTCTACTAAAAATACAAAAATTAGCCGGGCGTGGTGGCGCGCGCCTGTAATCCCAGCTACTCGGGAGGCTGAGGCAGGAGAATCGCTTGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTCTCAAAAA\00", align 1
 @seed = internal global i32 42, align 4
-@.str.2 = private unnamed_addr constant [16 x i8] c"acgtBDHKMNRSVWY\00", align 1
-@.str.3 = private unnamed_addr constant [5 x i8] c"acgt\00", align 1
+@.str.3 = private unnamed_addr constant [16 x i8] c"acgtBDHKMNRSVWY\00", align 1
+@.str.4 = private unnamed_addr constant [5 x i8] c"acgt\00", align 1
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local i32 @main(i32 noundef %0, i8** noundef %1) #0 {
@@ -23,43 +24,42 @@ define dso_local i32 @main(i32 noundef %0, i8** noundef %1) #0 {
   %4 = alloca i32, align 4
   %5 = alloca i8**, align 8
   %6 = alloca i32, align 4
+  %7 = alloca i64, align 8
+  %8 = alloca double, align 8
   store i32 0, i32* %3, align 4
   store i32 %0, i32* %4, align 4
   store i8** %1, i8*** %5, align 8
-  store i32 1000, i32* %6, align 4
-  %7 = load i32, i32* %4, align 4
-  %8 = icmp sgt i32 %7, 1
-  br i1 %8, label %9, label %14
-
-9:                                                ; preds = %2
-  %10 = load i8**, i8*** %5, align 8
-  %11 = getelementptr inbounds i8*, i8** %10, i64 1
-  %12 = load i8*, i8** %11, align 8
-  %13 = call i32 @atoi(i8* noundef %12) #6
-  store i32 %13, i32* %6, align 4
-  br label %14
-
-14:                                               ; preds = %9, %2
-  %15 = call i64 @write(i32 noundef 1, i8* noundef getelementptr inbounds ([23 x i8], [23 x i8]* @header1, i64 0, i64 0), i64 noundef 22)
-  %16 = load i8*, i8** @alu, align 8
-  %17 = load i32, i32* %6, align 4
-  %18 = mul nsw i32 %17, 2
-  call void @repeat_fasta(i8* noundef %16, i32 noundef %18)
-  %19 = call i64 @write(i32 noundef 1, i8* noundef getelementptr inbounds ([26 x i8], [26 x i8]* @header2, i64 0, i64 0), i64 noundef 25)
-  %20 = load i8*, i8** @iub, align 8
-  %21 = load i32, i32* %6, align 4
-  %22 = mul nsw i32 %21, 3
-  call void @random_fasta(i8* noundef %20, float* noundef getelementptr inbounds ([15 x float], [15 x float]* @iub_p, i64 0, i64 0), i32 noundef %22)
-  %23 = call i64 @write(i32 noundef 1, i8* noundef getelementptr inbounds ([31 x i8], [31 x i8]* @header3, i64 0, i64 0), i64 noundef 30)
-  %24 = load i8*, i8** @homosapiens, align 8
-  %25 = load i32, i32* %6, align 4
-  %26 = mul nsw i32 %25, 5
-  call void @random_fasta(i8* noundef %24, float* noundef getelementptr inbounds ([4 x float], [4 x float]* @homosapiens_p, i64 0, i64 0), i32 noundef %26)
+  store i32 500000, i32* %6, align 4
+  %9 = call i64 @clock() #6
+  store i64 %9, i64* %7, align 8
+  %10 = call i64 @write(i32 noundef 1, i8* noundef getelementptr inbounds ([23 x i8], [23 x i8]* @header1, i64 0, i64 0), i64 noundef 22)
+  %11 = load i8*, i8** @alu, align 8
+  %12 = load i32, i32* %6, align 4
+  %13 = mul nsw i32 %12, 2
+  call void @repeat_fasta(i8* noundef %11, i32 noundef %13)
+  %14 = call i64 @write(i32 noundef 1, i8* noundef getelementptr inbounds ([26 x i8], [26 x i8]* @header2, i64 0, i64 0), i64 noundef 25)
+  %15 = load i8*, i8** @iub, align 8
+  %16 = load i32, i32* %6, align 4
+  %17 = mul nsw i32 %16, 3
+  call void @random_fasta(i8* noundef %15, float* noundef getelementptr inbounds ([15 x float], [15 x float]* @iub_p, i64 0, i64 0), i32 noundef %17)
+  %18 = call i64 @write(i32 noundef 1, i8* noundef getelementptr inbounds ([31 x i8], [31 x i8]* @header3, i64 0, i64 0), i64 noundef 30)
+  %19 = load i8*, i8** @homosapiens, align 8
+  %20 = load i32, i32* %6, align 4
+  %21 = mul nsw i32 %20, 5
+  call void @random_fasta(i8* noundef %19, float* noundef getelementptr inbounds ([4 x float], [4 x float]* @homosapiens_p, i64 0, i64 0), i32 noundef %21)
+  %22 = call i64 @clock() #6
+  %23 = load i64, i64* %7, align 8
+  %24 = sub nsw i64 %22, %23
+  %25 = sitofp i64 %24 to double
+  %26 = fdiv double %25, 1.000000e+06
+  store double %26, double* %8, align 8
+  %27 = load double, double* %8, align 8
+  %28 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([11 x i8], [11 x i8]* @.str, i64 0, i64 0), double noundef %27)
   ret i32 0
 }
 
-; Function Attrs: nounwind readonly willreturn
-declare i32 @atoi(i8* noundef) #1
+; Function Attrs: nounwind
+declare i64 @clock() #1
 
 declare i64 @write(i32 noundef, i8* noundef, i64 noundef) #2
 
@@ -79,7 +79,7 @@ define internal void @repeat_fasta(i8* noundef %0, i32 noundef %1) #0 {
   store i8* %0, i8** %3, align 8
   store i32 %1, i32* %4, align 4
   %14 = load i8*, i8** %3, align 8
-  %15 = call i64 @strlen(i8* noundef %14) #6
+  %15 = call i64 @strlen(i8* noundef %14) #7
   %16 = trunc i64 %15 to i32
   store i32 %16, i32* %5, align 4
   %17 = load i32, i32* %5, align 4
@@ -87,7 +87,7 @@ define internal void @repeat_fasta(i8* noundef %0, i32 noundef %1) #0 {
   store i32 %18, i32* %6, align 4
   %19 = load i32, i32* %6, align 4
   %20 = sext i32 %19 to i64
-  %21 = call noalias i8* @malloc(i64 noundef %20) #7
+  %21 = call noalias i8* @malloc(i64 noundef %20) #6
   store i8* %21, i8** %7, align 8
   %22 = load i32, i32* %5, align 4
   %23 = icmp slt i32 60, %22
@@ -160,7 +160,7 @@ define internal void @repeat_fasta(i8* noundef %0, i32 noundef %1) #0 {
   store i32 %69, i32* %9, align 4
   %70 = load i32, i32* %9, align 4
   %71 = sext i32 %70 to i64
-  %72 = call noalias i8* @malloc(i64 noundef %71) #7
+  %72 = call noalias i8* @malloc(i64 noundef %71) #6
   store i8* %72, i8** %10, align 8
   store i32 0, i32* %8, align 4
   br label %73
@@ -247,16 +247,16 @@ define internal void @repeat_fasta(i8* noundef %0, i32 noundef %1) #0 {
   %130 = sext i32 %129 to i64
   %131 = call i64 @write(i32 noundef 1, i8* noundef %126, i64 noundef %130)
   %132 = load i8*, i8** %7, align 8
-  call void @free(i8* noundef %132) #7
+  call void @free(i8* noundef %132) #6
   %133 = load i8*, i8** %10, align 8
-  call void @free(i8* noundef %133) #7
+  call void @free(i8* noundef %133) #6
   %134 = load i32, i32* %4, align 4
   %135 = srem i32 %134, 60
   %136 = icmp ne i32 %135, 0
   br i1 %136, label %137, label %139
 
 137:                                              ; preds = %117
-  %138 = call i64 @write(i32 noundef 1, i8* noundef getelementptr inbounds ([2 x i8], [2 x i8]* @.str, i64 0, i64 0), i64 noundef 1)
+  %138 = call i64 @write(i32 noundef 1, i8* noundef getelementptr inbounds ([2 x i8], [2 x i8]* @.str.1, i64 0, i64 0), i64 noundef 1)
   br label %139
 
 139:                                              ; preds = %137, %117
@@ -490,28 +490,30 @@ define internal void @random_fasta(i8* noundef %0, float* noundef %1, i32 nounde
   br i1 %148, label %149, label %151
 
 149:                                              ; preds = %138
-  %150 = call i64 @write(i32 noundef 1, i8* noundef getelementptr inbounds ([2 x i8], [2 x i8]* @.str, i64 0, i64 0), i64 noundef 1)
+  %150 = call i64 @write(i32 noundef 1, i8* noundef getelementptr inbounds ([2 x i8], [2 x i8]* @.str.1, i64 0, i64 0), i64 noundef 1)
   br label %151
 
 151:                                              ; preds = %149, %138
   %152 = load i8*, i8** %11, align 8
-  call void @free(i8* noundef %152) #7
+  call void @free(i8* noundef %152) #6
   %153 = load i8*, i8** %10, align 8
-  call void @free(i8* noundef %153) #7
+  call void @free(i8* noundef %153) #6
   ret void
 }
 
+declare i32 @printf(i8* noundef, ...) #2
+
 ; Function Attrs: nounwind readonly willreturn
-declare i64 @strlen(i8* noundef) #1
+declare i64 @strlen(i8* noundef) #3
 
 ; Function Attrs: nounwind
-declare noalias i8* @malloc(i64 noundef) #3
+declare noalias i8* @malloc(i64 noundef) #1
 
 ; Function Attrs: argmemonly nofree nounwind willreturn
 declare void @llvm.memcpy.p0i8.p0i8.i64(i8* noalias nocapture writeonly, i8* noalias nocapture readonly, i64, i1 immarg) #4
 
 ; Function Attrs: nounwind
-declare void @free(i8* noundef) #3
+declare void @free(i8* noundef) #1
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define internal i8* @build_hash(i8* noundef %0, float* noundef %1) #0 {
@@ -525,7 +527,7 @@ define internal i8* @build_hash(i8* noundef %0, float* noundef %1) #0 {
   %10 = alloca float, align 4
   store i8* %0, i8** %3, align 8
   store float* %1, float** %4, align 8
-  %11 = call noalias i8* @malloc(i64 noundef 139968) #7
+  %11 = call noalias i8* @malloc(i64 noundef 139968) #6
   store i8* %11, i8** %7, align 8
   %12 = load i8*, i8** %7, align 8
   %13 = icmp ne i8* %12, null
@@ -538,7 +540,7 @@ define internal i8* @build_hash(i8* noundef %0, float* noundef %1) #0 {
 15:                                               ; preds = %2
   store float 0.000000e+00, float* %8, align 4
   %16 = load i8*, i8** %3, align 8
-  %17 = call i64 @strlen(i8* noundef %16) #6
+  %17 = call i64 @strlen(i8* noundef %16) #7
   %18 = trunc i64 %17 to i32
   store i32 %18, i32* %9, align 4
   %19 = load float*, float** %4, align 8
@@ -623,7 +625,7 @@ define internal i8* @buffer_with_linebreaks(i32 noundef %0) #0 {
   %5 = load i32, i32* %2, align 4
   %6 = mul nsw i32 61, %5
   %7 = sext i32 %6 to i64
-  %8 = call noalias i8* @malloc(i64 noundef %7) #7
+  %8 = call noalias i8* @malloc(i64 noundef %7) #6
   store i8* %8, i8** %3, align 8
   %9 = load i8*, i8** %3, align 8
   %10 = icmp ne i8* %9, null
@@ -668,13 +670,13 @@ define internal i8* @buffer_with_linebreaks(i32 noundef %0) #0 {
 declare void @exit(i32 noundef) #5
 
 attributes #0 = { noinline nounwind optnone uwtable "frame-pointer"="all" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #1 = { nounwind readonly willreturn "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #1 = { nounwind "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #2 = { "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #3 = { nounwind "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #3 = { nounwind readonly willreturn "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #4 = { argmemonly nofree nounwind willreturn }
 attributes #5 = { noreturn nounwind "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #6 = { nounwind readonly willreturn }
-attributes #7 = { nounwind }
+attributes #6 = { nounwind }
+attributes #7 = { nounwind readonly willreturn }
 attributes #8 = { noreturn nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3, !4}

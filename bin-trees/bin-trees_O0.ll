@@ -8,6 +8,7 @@ target triple = "x86_64-pc-linux-gnu"
 @.str = private unnamed_addr constant [38 x i8] c"stretch tree of depth %u\09 check: %li\0A\00", align 1
 @.str.1 = private unnamed_addr constant [36 x i8] c"%li\09 trees of depth %u\09 check: %li\0A\00", align 1
 @.str.2 = private unnamed_addr constant [41 x i8] c"long lived tree of depth %u\09 check: %li\0A\00", align 1
+@.str.3 = private unnamed_addr constant [11 x i8] c"Time: %lf\0A\00", align 1
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local %struct.tn* @NewTreeNode(%struct.tn* noundef %0, %struct.tn* noundef %1) #0 {
@@ -16,7 +17,7 @@ define dso_local %struct.tn* @NewTreeNode(%struct.tn* noundef %0, %struct.tn* no
   %5 = alloca %struct.tn*, align 8
   store %struct.tn* %0, %struct.tn** %3, align 8
   store %struct.tn* %1, %struct.tn** %4, align 8
-  %6 = call noalias i8* @malloc(i64 noundef 16) #4
+  %6 = call noalias i8* @malloc(i64 noundef 16) #3
   %7 = bitcast i8* %6 to %struct.tn*
   store %struct.tn* %7, %struct.tn** %5, align 8
   %8 = load %struct.tn*, %struct.tn** %3, align 8
@@ -122,7 +123,7 @@ define dso_local void @DeleteTree(%struct.tn* noundef %0) #0 {
 14:                                               ; preds = %7, %1
   %15 = load %struct.tn*, %struct.tn** %2, align 8
   %16 = bitcast %struct.tn* %15 to i8*
-  call void @free(i8* noundef %16) #4
+  call void @free(i8* noundef %16) #3
   ret void
 }
 
@@ -143,135 +144,140 @@ define dso_local i32 @main(i32 noundef %0, i8** noundef %1) #0 {
   %12 = alloca %struct.tn*, align 8
   %13 = alloca %struct.tn*, align 8
   %14 = alloca i64, align 8
-  %15 = alloca i64, align 8
+  %15 = alloca double, align 8
   %16 = alloca i64, align 8
+  %17 = alloca i64, align 8
+  %18 = alloca i64, align 8
   store i32 0, i32* %3, align 4
   store i32 %0, i32* %4, align 4
   store i8** %1, i8*** %5, align 8
-  %17 = load i8**, i8*** %5, align 8
-  %18 = getelementptr inbounds i8*, i8** %17, i64 1
-  %19 = load i8*, i8** %18, align 8
-  %20 = call i64 @atol(i8* noundef %19) #5
-  %21 = trunc i64 %20 to i32
-  store i32 %21, i32* %6, align 4
+  store i32 20, i32* %6, align 4
   store i32 4, i32* %8, align 4
-  %22 = load i32, i32* %8, align 4
-  %23 = add i32 %22, 2
-  %24 = load i32, i32* %6, align 4
-  %25 = icmp ugt i32 %23, %24
-  br i1 %25, label %26, label %29
+  %19 = call i64 @clock() #3
+  store i64 %19, i64* %14, align 8
+  %20 = load i32, i32* %8, align 4
+  %21 = add i32 %20, 2
+  %22 = load i32, i32* %6, align 4
+  %23 = icmp ugt i32 %21, %22
+  br i1 %23, label %24, label %27
 
-26:                                               ; preds = %2
-  %27 = load i32, i32* %8, align 4
-  %28 = add i32 %27, 2
+24:                                               ; preds = %2
+  %25 = load i32, i32* %8, align 4
+  %26 = add i32 %25, 2
+  store i32 %26, i32* %9, align 4
+  br label %29
+
+27:                                               ; preds = %2
+  %28 = load i32, i32* %6, align 4
   store i32 %28, i32* %9, align 4
-  br label %31
+  br label %29
 
-29:                                               ; preds = %2
-  %30 = load i32, i32* %6, align 4
-  store i32 %30, i32* %9, align 4
-  br label %31
-
-31:                                               ; preds = %29, %26
-  %32 = load i32, i32* %9, align 4
-  %33 = add i32 %32, 1
-  store i32 %33, i32* %10, align 4
+29:                                               ; preds = %27, %24
+  %30 = load i32, i32* %9, align 4
+  %31 = add i32 %30, 1
+  store i32 %31, i32* %10, align 4
+  %32 = load i32, i32* %10, align 4
+  %33 = call %struct.tn* @BottomUpTree(i32 noundef %32)
+  store %struct.tn* %33, %struct.tn** %11, align 8
   %34 = load i32, i32* %10, align 4
-  %35 = call %struct.tn* @BottomUpTree(i32 noundef %34)
-  store %struct.tn* %35, %struct.tn** %11, align 8
-  %36 = load i32, i32* %10, align 4
-  %37 = load %struct.tn*, %struct.tn** %11, align 8
-  %38 = call i64 @ItemCheck(%struct.tn* noundef %37)
-  %39 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([38 x i8], [38 x i8]* @.str, i64 0, i64 0), i32 noundef %36, i64 noundef %38)
-  %40 = load %struct.tn*, %struct.tn** %11, align 8
-  call void @DeleteTree(%struct.tn* noundef %40)
-  %41 = load i32, i32* %9, align 4
-  %42 = call %struct.tn* @BottomUpTree(i32 noundef %41)
-  store %struct.tn* %42, %struct.tn** %12, align 8
-  %43 = load i32, i32* %8, align 4
-  store i32 %43, i32* %7, align 4
-  br label %44
+  %35 = load %struct.tn*, %struct.tn** %11, align 8
+  %36 = call i64 @ItemCheck(%struct.tn* noundef %35)
+  %37 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([38 x i8], [38 x i8]* @.str, i64 0, i64 0), i32 noundef %34, i64 noundef %36)
+  %38 = load %struct.tn*, %struct.tn** %11, align 8
+  call void @DeleteTree(%struct.tn* noundef %38)
+  %39 = load i32, i32* %9, align 4
+  %40 = call %struct.tn* @BottomUpTree(i32 noundef %39)
+  store %struct.tn* %40, %struct.tn** %12, align 8
+  %41 = load i32, i32* %8, align 4
+  store i32 %41, i32* %7, align 4
+  br label %42
 
-44:                                               ; preds = %77, %31
-  %45 = load i32, i32* %7, align 4
-  %46 = load i32, i32* %9, align 4
-  %47 = icmp ule i32 %45, %46
-  br i1 %47, label %48, label %80
+42:                                               ; preds = %75, %29
+  %43 = load i32, i32* %7, align 4
+  %44 = load i32, i32* %9, align 4
+  %45 = icmp ule i32 %43, %44
+  br i1 %45, label %46, label %78
 
-48:                                               ; preds = %44
-  %49 = load i32, i32* %9, align 4
-  %50 = load i32, i32* %7, align 4
-  %51 = sub i32 %49, %50
-  %52 = load i32, i32* %8, align 4
-  %53 = add i32 %51, %52
-  %54 = uitofp i32 %53 to double
-  %55 = call double @pow(double noundef 2.000000e+00, double noundef %54) #4
-  %56 = fptosi double %55 to i64
-  store i64 %56, i64* %15, align 8
-  store i64 0, i64* %16, align 8
-  store i64 1, i64* %14, align 8
-  br label %57
+46:                                               ; preds = %42
+  %47 = load i32, i32* %9, align 4
+  %48 = load i32, i32* %7, align 4
+  %49 = sub i32 %47, %48
+  %50 = load i32, i32* %8, align 4
+  %51 = add i32 %49, %50
+  %52 = uitofp i32 %51 to double
+  %53 = call double @pow(double noundef 2.000000e+00, double noundef %52) #3
+  %54 = fptosi double %53 to i64
+  store i64 %54, i64* %17, align 8
+  store i64 0, i64* %18, align 8
+  store i64 1, i64* %16, align 8
+  br label %55
 
-57:                                               ; preds = %69, %48
-  %58 = load i64, i64* %14, align 8
-  %59 = load i64, i64* %15, align 8
-  %60 = icmp sle i64 %58, %59
-  br i1 %60, label %61, label %72
+55:                                               ; preds = %67, %46
+  %56 = load i64, i64* %16, align 8
+  %57 = load i64, i64* %17, align 8
+  %58 = icmp sle i64 %56, %57
+  br i1 %58, label %59, label %70
 
-61:                                               ; preds = %57
-  %62 = load i32, i32* %7, align 4
-  %63 = call %struct.tn* @BottomUpTree(i32 noundef %62)
-  store %struct.tn* %63, %struct.tn** %13, align 8
-  %64 = load %struct.tn*, %struct.tn** %13, align 8
-  %65 = call i64 @ItemCheck(%struct.tn* noundef %64)
-  %66 = load i64, i64* %16, align 8
-  %67 = add nsw i64 %66, %65
-  store i64 %67, i64* %16, align 8
-  %68 = load %struct.tn*, %struct.tn** %13, align 8
-  call void @DeleteTree(%struct.tn* noundef %68)
-  br label %69
+59:                                               ; preds = %55
+  %60 = load i32, i32* %7, align 4
+  %61 = call %struct.tn* @BottomUpTree(i32 noundef %60)
+  store %struct.tn* %61, %struct.tn** %13, align 8
+  %62 = load %struct.tn*, %struct.tn** %13, align 8
+  %63 = call i64 @ItemCheck(%struct.tn* noundef %62)
+  %64 = load i64, i64* %18, align 8
+  %65 = add nsw i64 %64, %63
+  store i64 %65, i64* %18, align 8
+  %66 = load %struct.tn*, %struct.tn** %13, align 8
+  call void @DeleteTree(%struct.tn* noundef %66)
+  br label %67
 
-69:                                               ; preds = %61
-  %70 = load i64, i64* %14, align 8
-  %71 = add nsw i64 %70, 1
-  store i64 %71, i64* %14, align 8
-  br label %57, !llvm.loop !6
+67:                                               ; preds = %59
+  %68 = load i64, i64* %16, align 8
+  %69 = add nsw i64 %68, 1
+  store i64 %69, i64* %16, align 8
+  br label %55, !llvm.loop !6
 
-72:                                               ; preds = %57
-  %73 = load i64, i64* %15, align 8
-  %74 = load i32, i32* %7, align 4
-  %75 = load i64, i64* %16, align 8
-  %76 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([36 x i8], [36 x i8]* @.str.1, i64 0, i64 0), i64 noundef %73, i32 noundef %74, i64 noundef %75)
-  br label %77
+70:                                               ; preds = %55
+  %71 = load i64, i64* %17, align 8
+  %72 = load i32, i32* %7, align 4
+  %73 = load i64, i64* %18, align 8
+  %74 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([36 x i8], [36 x i8]* @.str.1, i64 0, i64 0), i64 noundef %71, i32 noundef %72, i64 noundef %73)
+  br label %75
 
-77:                                               ; preds = %72
-  %78 = load i32, i32* %7, align 4
-  %79 = add i32 %78, 2
-  store i32 %79, i32* %7, align 4
-  br label %44, !llvm.loop !8
+75:                                               ; preds = %70
+  %76 = load i32, i32* %7, align 4
+  %77 = add i32 %76, 2
+  store i32 %77, i32* %7, align 4
+  br label %42, !llvm.loop !8
 
-80:                                               ; preds = %44
-  %81 = load i32, i32* %9, align 4
-  %82 = load %struct.tn*, %struct.tn** %12, align 8
-  %83 = call i64 @ItemCheck(%struct.tn* noundef %82)
-  %84 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([41 x i8], [41 x i8]* @.str.2, i64 0, i64 0), i32 noundef %81, i64 noundef %83)
+78:                                               ; preds = %42
+  %79 = load i32, i32* %9, align 4
+  %80 = load %struct.tn*, %struct.tn** %12, align 8
+  %81 = call i64 @ItemCheck(%struct.tn* noundef %80)
+  %82 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([41 x i8], [41 x i8]* @.str.2, i64 0, i64 0), i32 noundef %79, i64 noundef %81)
+  %83 = call i64 @clock() #3
+  %84 = load i64, i64* %14, align 8
+  %85 = sub nsw i64 %83, %84
+  %86 = sitofp i64 %85 to double
+  %87 = fdiv double %86, 1.000000e+06
+  store double %87, double* %15, align 8
+  %88 = load double, double* %15, align 8
+  %89 = call i32 (i8*, ...) @printf(i8* noundef getelementptr inbounds ([11 x i8], [11 x i8]* @.str.3, i64 0, i64 0), double noundef %88)
   ret i32 0
 }
 
-; Function Attrs: nounwind readonly willreturn
-declare i64 @atol(i8* noundef) #2
+; Function Attrs: nounwind
+declare i64 @clock() #1
 
-declare i32 @printf(i8* noundef, ...) #3
+declare i32 @printf(i8* noundef, ...) #2
 
 ; Function Attrs: nounwind
 declare double @pow(double noundef, double noundef) #1
 
 attributes #0 = { noinline nounwind optnone uwtable "frame-pointer"="all" "min-legal-vector-width"="0" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
 attributes #1 = { nounwind "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #2 = { nounwind readonly willreturn "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #3 = { "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
-attributes #4 = { nounwind }
-attributes #5 = { nounwind readonly willreturn }
+attributes #2 = { "frame-pointer"="all" "no-trapping-math"="true" "stack-protector-buffer-size"="8" "target-cpu"="x86-64" "target-features"="+cx8,+fxsr,+mmx,+sse,+sse2,+x87" "tune-cpu"="generic" }
+attributes #3 = { nounwind }
 
 !llvm.module.flags = !{!0, !1, !2, !3, !4}
 !llvm.ident = !{!5}
